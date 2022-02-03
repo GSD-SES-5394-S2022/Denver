@@ -1,0 +1,76 @@
+---
+title: "Assignment2"
+output: html_document
+---
+# Assignment 2 Zones
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(tidycensus)
+```
+
+```{r}
+census_api_key("350fe3db857ba51f00d9ac43b776156dc52643df", install = TRUE)
+```
+
+## Exploring Variables
+```{r}
+acs_tract <- load_variables(2019, "acs5")
+```
+## Census Data
+```{r}
+acs_vars <- c(population = "B01003_001", 
+        housing_units = "B25001_001", 
+        owner_nocar = "B25044_003",
+        renter_nocar = "B25044_010",
+        hh_income_total = "B19001_001",
+        hh_income_10k = "B19001_002",
+        hh_income_15k = "B19001_003",
+        hh_income_20k = "B19001_004",
+        hh_income_25k = "B19001_005",
+        hh_income_30k = "B19001_006",
+        hh_income_35k = "B19001_007",
+        hh_income_40k = "B19001_008",
+        hh_income_45k = "B19001_009",
+        hh_income_50k = "B19001_010",
+        hh_income_60k = "B19001_011",
+        hh_income_75k = "B19001_012",
+        hh_income_100k = "B19001_013",
+        hh_income_125k = "B19001_014",
+        hh_income_150k = "B19001_015",
+        hh_income_200k = "B19001_016",
+        hh_income_200kplus = "B19001_017")
+```
+
+## Tracts Data
+```{r}
+tracts2019 <- get_acs(geography = "tract", 
+                        variables = acs_vars,
+                        state = 'CO',
+                        county = c('Denver', 'Arapahoe', 'Jefferson', 'Adams', 'Douglas', 'Gilpin', 'Clear Creek', 'Elbert', 'Park', 'Broomfield'),
+                        output = "wide",
+                        geometry = TRUE,
+                        year  = 2019,
+                        survey = "acs5")
+```
+
+### Employment Data
+```{r}
+lehd_blocks <- read_csv('https://lehd.ces.census.gov/data/lodes/LODES7/co/wac/co_wac_S000_JT00_2019.csv.gz', show_col_types = FALSE) %>%
+  rename(total_emp = C000) %>%
+  mutate(basic_emp = CNS01+CNS02+CNS03+CNS04+CNS05+CNS06+CNS08+CNS09) %>%
+  rename(retail_emp = CNS07) %>%
+  mutate(service_emp = total_emp - basic_emp - retail_emp) %>%
+  select(w_geocode, total_emp, basic_emp, retail_emp, service_emp)
+```
+
+## Combine Variables
+```{r}
+acs_vars <- acs_vars %>%
+mutate(nocar = owner_nocar + renter_nocar,
+         hh_income_low = hh_income_10k + hh_income_15k + hh_income_20k + hh_income_30k + hh_income_35k + hh_income_40k,
+         hh_income_mid = hh_income_45k +hh_income_50k + hh_income_60k + hh_income_75k + hh_income_100k,
+         hh_income_high = hh_income_125k + hh_income_150k + hh_income_200k + hh_income_200kplus)
+```
+
