@@ -11,6 +11,7 @@ library(tidycensus)
 library(rgeos)
 library(rgdal)
 library(sp)
+library(units)
 ```
 
 ## Bringing in GeoJson data to determine MF zoning
@@ -106,19 +107,14 @@ westminster_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denve
 ```
 #### Westminster MF filter
 ``` {r}
-westminster_mf_R3 <- westminster_zoning %>%
-  filter(ZONECODE == "R-3") %>%
-  st_transform(crs = st_crs(tracts2019))
-
-westminster_mf_R4 <- westminster_zoning %>%
-  filter(ZONECODE == "R-4") %>%
+westminster_mf <- westminster_zoning %>%
+  filter(ZONECODE == c("R-3", "R-4")) %>%
   st_transform(crs = st_crs(tracts2019))
 ```
 
 ##### Westminster Tract Overlay
 ```{r}
-westminster_tracts_R3 <- tracts2019[westminster_mf_R3,]
-westminster_tracts_R4 <- tracts2019[westminster_mf_R4,]
+westminster_tracts <- tracts2019[westminster_mf,]
 ```
 
 ### Denver 
@@ -166,3 +162,12 @@ denver_tracts_12 <- tracts2019[denver_12,]
 denver_tracts_20 <- tracts2019[denver_20,]
 
 denver_tracts_2.5 <- tracts2019[denver_2.5,]
+```
+
+##Bringing Data to Excel
+``` {r}
+write_csv(arvada_tracts_R6, "data/tract_arvada6.csv", append = FALSE)
+write_csv(arvada_tracts_R13, "data/tract_arvada13.csv", append = FALSE)
+write_csv(arvada_tracts_R24, "data/tract_arvada24.csv", append = FALSE)
+
+```
