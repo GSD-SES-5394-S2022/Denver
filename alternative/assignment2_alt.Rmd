@@ -1,0 +1,168 @@
+---
+title: "assignment2_alt"
+output: html_document
+---
+## Load Libraries
+```{r}
+library(ggplot2)
+library(sf)
+library(tidyverse)
+library(tidycensus)
+library(rgeos)
+library(rgdal)
+library(sp)
+```
+
+## Bringing in GeoJson data to determine MF zoning
+
+###Arvada
+``` {r}
+arvada_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/Arvada/arvada_zoning.geojson")
+
+```
+#### Arvada MF filter
+``` {r}
+arvada_mf_R6 <- arvada_zoning %>%
+  filter(ZONING == "R6")%>%
+  st_transform(crs = st_crs(tracts2019))
+
+arvada_mf_R13 <- arvada_zoning %>%
+  filter(ZONING == "R13")%>%
+  st_transform(crs = st_crs(tracts2019))
+
+arvada_mf_R24 <-arvada_zoning %>%
+  filter(ZONING == "R24")%>%
+  st_transform(crs = st_crs(tracts2019))
+```
+
+##### Arvada Tract Overlay
+```{r}
+arvada_tracts_R6 <- tracts2019[arvada_mf_R6,]
+arvada_tracts_R13 <- tracts2019[arvada_mf_R13,]
+arvada_tracts_R24 <- tracts2019[arvada_mf_R24,]
+```
+
+### Aurora 
+``` {r}
+aurora_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/Aurora/aurora_zoning.geojson")
+
+```
+#### Aurora MF filter
+``` {r}
+aurora_mf_R3 <- aurora_zoning %>%
+  filter(DISTRICT_ID == "R-3") %>%
+  st_transform(crs = st_crs(tracts2019))
+
+aurora_mf_R4 <- aurora_zoning %>%
+  filter(DISTRICT_ID == "R-4") %>%
+  st_transform(crs = st_crs(tracts2019))
+
+```
+
+##### Aurora Tract Overlay
+```{r}
+aurora_tracts_R3 <- tracts2019[aurora_mf_R3,]
+aurora_tracts_R4 <- tracts2019[aurora_mf_R4,]
+```
+
+### Centennial 
+``` {r}
+centennial_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/Centennial/centennial_zoning.geojson")
+
+```
+#### Centennial MF filter
+``` {r}
+centennial_mf <- centennial_zoning %>%
+  filter(ZONECLASS == "RU") %>%
+  st_transform(crs = st_crs(tracts2019))
+```
+
+##### Centennial Tract Overlay
+```{r}
+centennial_tracts <- tracts2019[centennial_mf,]
+```
+
+### Thornton 
+``` {r}
+thornton_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/Thornton/thornton_zoning.geojson")
+
+```
+#### Thornton MF filter
+``` {r}
+thornton_mf <- thornton_zoning %>%
+  filter(DISTRICT == "MF") %>%
+  st_transform(crs = st_crs(tracts2019))
+```
+
+##### Thornton Tract Overlay
+```{r}
+thornton_tracts <- tracts2019[thornton_mf,]
+```
+
+### Westminster 
+``` {r}
+westminster_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/Westminster/westminster_zoning.geojson")
+
+```
+#### Westminster MF filter
+``` {r}
+westminster_mf_R3 <- westminster_zoning %>%
+  filter(ZONECODE == "R-3") %>%
+  st_transform(crs = st_crs(tracts2019))
+
+westminster_mf_R4 <- westminster_zoning %>%
+  filter(ZONECODE == "R-4") %>%
+  st_transform(crs = st_crs(tracts2019))
+```
+
+##### Westminster Tract Overlay
+```{r}
+westminster_tracts_R3 <- tracts2019[westminster_mf_R3,]
+westminster_tracts_R4 <- tracts2019[westminster_mf_R4,]
+```
+
+### Denver 
+``` {r}
+denver_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/denver/denver_zoning/zoning.shp")
+
+```
+#### Denver MF filter
+``` {r}
+denver_3 <- denver_zoning %>%
+  filter(ZONE_DIS_1 == c("S-MU-3", "G-MU-3")) %>%
+  st_transform(crs = st_crs(tracts2019))
+
+denver_5 <- denver_zoning %>%
+  filter(ZONE_DIS_1 == c("S-MU-5", "G-MU-5")) %>%
+  st_transform(crs = st_crs(tracts2019))
+
+denver_8 <- denver_zoning %>%
+  filter(ZONE_DIS_1 == c("S-MU-8", "G-MU-8")) %>%
+  st_transform(crs = st_crs(tracts2019))
+
+denver_12 <- denver_zoning %>%
+  filter(ZONE_DIS_1 == c("S-MU-12", "G-MU-12")) %>%
+  st_transform(crs = st_crs(tracts2019))
+
+denver_20 <- denver_zoning %>%
+  filter(ZONE_DIS_1 == c("S-MU-20", "G-MU-20")) %>%
+  st_transform(crs = st_crs(tracts2019))
+
+denver_2.5 <- denver_zoning %>%
+  filter(ZONE_DIS_1 == "E-MU-2.5") %>%
+  st_transform(crs = st_crs(tracts2019))
+```
+
+##### Denver Tract Overlay
+```{r}
+denver_tracts_3 <- tracts2019[denver_3,]
+
+denver_tracts_5 <- tracts2019[denver_5,]
+
+denver_tracts_8 <- tracts2019[denver_8,]
+
+denver_tracts_12 <- tracts2019[denver_12,]
+
+denver_tracts_20 <- tracts2019[denver_20,]
+
+denver_tracts_2.5 <- tracts2019[denver_2.5,]
