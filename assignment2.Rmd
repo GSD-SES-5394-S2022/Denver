@@ -4,27 +4,20 @@ output: html_document
 ---
 # Assignment 2 Zones
 
+## Load Libraries
 ```{r}
 library(ggplot2)
 library(tidyverse)
 library(tidycensus)
 ```
 
-```{r}
-census_api_key("350fe3db857ba51f00d9ac43b776156dc52643df", install = TRUE)
-```
-
-## Exploring Variables
-```{r}
-acs_tract <- load_variables(2019, "acs5")
-```
-## Census Data
+## Bring in Census Data - Populatio, Housing, Car Availability, Income, Household Size
 ```{r}
 acs_vars <- c(population = "B01003_001", 
         housing_units = "B25001_001", 
         owner_nocar = "B25044_003",
         renter_nocar = "B25044_010",
-        hh_income_total = "B19001_001",
+        hh_total = "B19001_001",
         hh_income_10k = "B19001_002",
         hh_income_15k = "B19001_003",
         hh_income_20k = "B19001_004",
@@ -40,37 +33,110 @@ acs_vars <- c(population = "B01003_001",
         hh_income_125k = "B19001_014",
         hh_income_150k = "B19001_015",
         hh_income_200k = "B19001_016",
-        hh_income_200kplus = "B19001_017")
+        hh_income_200kplus = "B19001_017",
+        fam_2person = "B11016_003",
+        oneperson_hh = "B11016_010",
+        nonfam_2person = "B11016_011")
 ```
 
-## Tracts Data
+### Creating Data Frame - Tracts Data
 ```{r}
 tracts2019 <- get_acs(geography = "tract", 
                         variables = acs_vars,
                         state = 'CO',
-                        county = c('Denver', 'Arapahoe', 'Jefferson', 'Adams', 'Douglas', 'Gilpin', 'Clear Creek', 'Elbert', 'Park', 'Broomfield'),
+                        county = c('Denver', 
+                                   'Arapahoe', 
+                                   'Jefferson', 
+                                   'Adams', 
+                                   'Douglas', 
+                                   'Gilpin', 
+                                   'Clear Creek', 
+                                   'Elbert', 
+                                   'Park', 
+                                   'Broomfield'),
                         output = "wide",
                         geometry = TRUE,
                         year  = 2019,
                         survey = "acs5")
 ```
 
-### Employment Data
+### Combine Variables: Low income determined by the poverty line in Colorado
 ```{r}
-lehd_blocks <- read_csv('https://lehd.ces.census.gov/data/lodes/LODES7/co/wac/co_wac_S000_JT00_2019.csv.gz', show_col_types = FALSE) %>%
-  rename(total_emp = C000) %>%
-  mutate(basic_emp = CNS01+CNS02+CNS03+CNS04+CNS05+CNS06+CNS08+CNS09) %>%
-  rename(retail_emp = CNS07) %>%
-  mutate(service_emp = total_emp - basic_emp - retail_emp) %>%
-  select(w_geocode, total_emp, basic_emp, retail_emp, service_emp)
+tracts2019 <- tracts2019 %>%
+mutate(nocar = owner_nocarE + renter_nocarE,
+       twoperson_hh = fam_2personE + nonfam_2personE,
+       hh_income_low = hh_income_10kE + 
+         hh_income_15kE + 
+         hh_income_20kE + 
+         hh_income_25kE,
+       hh_income_mid = hh_income_30kE + 
+         hh_income_35kE + 
+         hh_income_40kE + 
+         hh_income_45kE +
+         hh_income_50kE + 
+         hh_income_60kE + 
+         hh_income_75kE,
+       hh_income_high = hh_income_100kE +
+         hh_income_125kE + 
+         hh_income_150kE + 
+         hh_income_200kE + 
+         hh_income_200kplusE) %>%
+  select(GEOID, 
+         nocar,
+         populationE, 
+         housing_unitsE, 
+         hh_income_low, 
+         hh_income_mid, 
+         hh_income_high, 
+         hh_totalE, 
+         oneperson_hhE,
+         twoperson_hh) %>%
+
+rename(population = populationE,
+       housing_units = housing_unitsE,
+       hh_total = hh_totalE,
+       oneperson_hh = oneperson_hhE)
 ```
 
-## Combine Variables
+
+## Bring in Employment Data from LEHD
 ```{r}
-acs_vars <- acs_vars %>%
-mutate(nocar = owner_nocar + renter_nocar,
-         hh_income_low = hh_income_10k + hh_income_15k + hh_income_20k + hh_income_30k + hh_income_35k + hh_income_40k,
-         hh_income_mid = hh_income_45k +hh_income_50k + hh_income_60k + hh_income_75k + hh_income_100k,
-         hh_income_high = hh_income_125k + hh_income_150k + hh_income_200k + hh_income_200kplus)
+lehd_blocks <- read_csv('https://lehd.ces.census.gov/data/lodes/LODES7/co/wac/co_wac_S000_JT00_2019.csv.gz', 
+                        show_col_types = FALSE) %>%
+  rename(total_emp = C000) %>%
+  mutate(basic_emp = CNS01+
+           CNS02+
+           CNS03+
+           CNS04+
+           CNS05+
+           CNS06+
+           CNS08+
+           CNS09) %>%
+  rename(retail_emp = CNS07) %>%
+  mutate(service_emp = 
+           total_emp - 
+           basic_emp - 
+           retail_emp) %>%
+  select(w_geocode, 
+         total_emp, 
+         basic_emp, 
+         retail_emp, 
+         service_emp)
 ```
+
+### Collapse Data from Census Blocks to Tracts
+```{r}
+lehd_tracts <- lehd_blocks %>%
+  mutate(w_geocode = as.character(w_geocode)) %>%
+  mutate(GEOID = substr(w_geocode, 1, 11)) %>%
+  select(-w_geocode) %>%
+  group_by(GEOID) %>%
+  summarize(across(everything(), ~sum(.)))
+```
+
+## Join Employment and Census Data
+```{r}
+zones <- left_join(tracts2019, lehd_tracts)
+```
+
 
