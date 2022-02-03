@@ -165,9 +165,35 @@ denver_tracts_2.5 <- tracts2019[denver_2.5,]
 ```
 
 ##Bringing Data to Excel
+###Arvada
 ``` {r}
 write_csv(arvada_tracts_R6, "data/tract_arvada6.csv", append = FALSE)
 write_csv(arvada_tracts_R13, "data/tract_arvada13.csv", append = FALSE)
 write_csv(arvada_tracts_R24, "data/tract_arvada24.csv", append = FALSE)
+
+```
+
+###Aurora
+``` {r}
+write_csv(aurora_tracts_R3, "data/tract_aurora3.csv", append = FALSE)
+write_csv(aurora_tracts_R4, "data/tract_aurora4.csv", append = FALSE)
+
+```
+
+###Centennial
+``` {r}
+write_csv(centennial_tracts, "data/tract_centennial.csv", append = FALSE)
+
+```
+
+###Thornton
+``` {r}
+write_csv(thornton_tracts, "data/tract_thornton.csv", append = FALSE)
+
+```
+
+###Westminster
+``` {r}
+write_csv(westminster_tracts, "data/tract_westminster.csv", append = FALSE)
 
 ```
