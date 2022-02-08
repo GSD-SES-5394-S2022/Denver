@@ -172,43 +172,71 @@ denver_tracts_2.5 <- tracts2019[denver_2.5,]
 ##Bringing Data to Excel
 ###Arvada
 ``` {r}
-write_csv(arvada_tracts_R6, "data/tract_arvada6.csv", append = FALSE)
-write_csv(arvada_tracts_R13, "data/tract_arvada13.csv", append = FALSE)
-write_csv(arvada_tracts_R24, "data/tract_arvada24.csv", append = FALSE)
+write_csv(arvada_tracts_R6, 
+          "data/arvada/tract_arvada6.csv", 
+          append = FALSE)
+write_csv(arvada_tracts_R13, 
+          "data/arvada/tract_arvada13.csv", 
+          append = FALSE)
+write_csv(arvada_tracts_R24, 
+          "data/arvada/tract_arvada24.csv", 
+          append = FALSE)
 
 ```
 
 ###Aurora
 ``` {r}
-write_csv(aurora_tracts_R3, "data/tract_aurora3.csv", append = FALSE)
-write_csv(aurora_tracts_R4, "data/tract_aurora4.csv", append = FALSE)
+write_csv(aurora_tracts_R3, 
+          "data/aurora/tract_aurora3.csv", 
+          append = FALSE)
+write_csv(aurora_tracts_R4, 
+          "data/aurora/tract_aurora4.csv", 
+          append = FALSE)
 
 ```
 
 ###Centennial
 ``` {r}
-write_csv(centennial_tracts, "data/tract_centennial.csv", append = FALSE)
+write_csv(centennial_tracts, 
+          "data/centennial/tract_centennial.csv", 
+          append = FALSE)
 
 ```
 
 ###Thornton
 ``` {r}
-write_csv(thornton_tracts, "data/tract_thornton.csv", append = FALSE)
+write_csv(thornton_tracts, 
+          "data/thornton/tract_thornton.csv", 
+          append = FALSE)
 
 ```
 
 ###Westminster
 ``` {r}
-write_csv(westminster_tracts, "data/tract_westminster.csv", append = FALSE)
+write_csv(westminster_tracts, 
+          "data/westminster/tract_westminster.csv", 
+          append = FALSE)
 
 ```
 
 ###Denver
 ```{r}
-write_csv(denver_tracts_3, "data/tract_denver3.csv", append = FALSE)
-write_csv(denver_tracts_5, "data/tract_denver5.csv", append = FALSE)
-write_csv(denver_tracts_8, "data/tract_denver8.csv", append = FALSE)
-write_csv(denver_tracts_12, "data/tract_denver12.csv", append = FALSE)
-write_csv(denver_tracts_20, "data/tract_denver20.csv", append = FALSE)
-write_csv(denver_tracts_2.5, "data/tract_denver2.5.csv", append = FALSE)
+write_csv(denver_tracts_3, 
+          "data/denver/tract_denver3.csv", 
+          append = FALSE)
+write_csv(denver_tracts_5, 
+          "data/denver/tract_denver5.csv", 
+          append = FALSE)
+write_csv(denver_tracts_8, 
+          "data/denver/tract_denver8.csv", 
+          append = FALSE)
+write_csv(denver_tracts_12, 
+          "data/denver/tract_denver12.csv", 
+          append = FALSE)
+write_csv(denver_tracts_20, 
+          "data/denver/tract_denver20.csv", 
+          append = FALSE)
+write_csv(denver_tracts_2.5, 
+          "data/denver/tract_denver2.5.csv", 
+          append = FALSE)
 ```

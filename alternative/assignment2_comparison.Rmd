@@ -16,7 +16,10 @@ library(here)
 ###Bring Combined Cities New Data csv in
 
 ```{r}
-combinedtracts <- here("alternative/data/combined_tracts1.csv") %>%
+combinedtracts <- here("alternative",
+                      "data",
+                      "combined_cities",
+                      "combined_tracts1.csv") %>%
   st_read()
 ```
 ### Select relevant city data
