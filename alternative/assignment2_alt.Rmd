@@ -12,13 +12,15 @@ library(rgeos)
 library(rgdal)
 library(sp)
 library(units)
+library(here)
 ```
 
 ## Bringing in GeoJson data to determine MF zoning
 
 ###Arvada
 ``` {r}
-arvada_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/Arvada/arvada_zoning.geojson")
+arvada_zoning <- here("city_zoning/Arvada/arvada_zoning.geojson") %>%
+   st_read()
 
 ```
 #### Arvada MF filter
@@ -45,7 +47,8 @@ arvada_tracts_R24 <- tracts2019[arvada_mf_R24,]
 
 ### Aurora 
 ``` {r}
-aurora_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/Aurora/aurora_zoning.geojson")
+aurora_zoning <- here("city_zoning/Aurora/aurora_zoning.geojson") %>%
+   st_read()
 
 ```
 #### Aurora MF filter
@@ -68,7 +71,8 @@ aurora_tracts_R4 <- tracts2019[aurora_mf_R4,]
 
 ### Centennial 
 ``` {r}
-centennial_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/Centennial/centennial_zoning.geojson")
+centennial_zoning <- here("city_zoning/Centennial/centennial_zoning.geojson") %>%
+   st_read()
 
 ```
 #### Centennial MF filter
@@ -85,7 +89,8 @@ centennial_tracts <- tracts2019[centennial_mf,]
 
 ### Thornton 
 ``` {r}
-thornton_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/Thornton/thornton_zoning.geojson")
+thornton_zoning <- here("city_zoning/Thornton/thornton_zoning.geojson") %>%
+   st_read()
 
 ```
 #### Thornton MF filter
@@ -102,7 +107,8 @@ thornton_tracts <- tracts2019[thornton_mf,]
 
 ### Westminster 
 ``` {r}
-westminster_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/Westminster/westminster_zoning.geojson")
+westminster_zoning <- here("city_zoning/Westminster/westminster_zoning.geojson") %>%
+   st_read()
 
 ```
 #### Westminster MF filter
@@ -119,7 +125,8 @@ westminster_tracts <- tracts2019[westminster_mf,]
 
 ### Denver 
 ``` {r}
-denver_zoning <- st_read("~/GSD Spring 2022/Travel Behavior/DenverGit/Denver/city_zoning/denver/denver_zoning/zoning.shp")
+denver_zoning <- here("city_zoning/denver/denver_zoning/zoning.shp") %>%
+   st_read()
 
 ```
 #### Denver MF filter
@@ -196,4 +203,14 @@ write_csv(thornton_tracts, "data/tract_thornton.csv", append = FALSE)
 ``` {r}
 write_csv(westminster_tracts, "data/tract_westminster.csv", append = FALSE)
 
+```
+
+###Denver
+```{r}
+write_csv(denver_tracts_3, "data/tract_denver3.csv", append = FALSE)
+write_csv(denver_tracts_5, "data/tract_denver5.csv", append = FALSE)
+write_csv(denver_tracts_8, "data/tract_denver8.csv", append = FALSE)
+write_csv(denver_tracts_12, "data/tract_denver12.csv", append = FALSE)
+write_csv(denver_tracts_20, "data/tract_denver20.csv", append = FALSE)
+write_csv(denver_tracts_2.5, "data/tract_denver2.5.csv", append = FALSE)
 ```

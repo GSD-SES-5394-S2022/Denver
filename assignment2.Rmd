@@ -11,9 +11,6 @@ library(tidyverse)
 library(tidycensus)
 ```
 
-```{r}
-census_api_key("350fe3db857ba51f00d9ac43b776156dc52643df", install=TRUE, overwrite = TRUE)
-```
 
 ## Bring in Census Data - Populatio, Housing, Car Availability, Income, Household Size
 ```{r}
