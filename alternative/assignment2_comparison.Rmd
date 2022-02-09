@@ -399,3 +399,47 @@ proposed_retail_map +
                                               digits=0),
                                       "Employees"))
 ```
+
+###Summary Tables
+####Existing
+```{r}
+final_tracts %>%
+  pivot_longer(cols=c(nocar,
+                      population,
+                      housing_units,
+                      hh_income_low,
+                      hh_income_mid,
+                      hh_income_high,
+                      oneperson_hh,
+                      twoperson_hh,
+                      basic_emp, 
+                      retail_emp, 
+                      service_emp),
+               names_to = "Variable",
+               values_to = "value") %>%
+  group_by(Variable) %>%
+  summarize(Average = mean(value, na.rm=TRUE),
+            `Standard deviation` = sd(value, na.rm=TRUE),
+            Median = median(value, median(value, na.rm=TRUE)))
+```
+####Proposed
+```{r}
+final_tracts %>%
+  pivot_longer(cols=c(new_nocar,
+                      new_total_tract_population,
+                      new_total_housing_units,
+                      new_hh_income_low,
+                      new_hh_income_mid,
+                      new_hh_income_high,
+                      new_oneperson_hh,
+                      new_twoperson_hh,
+                      new_basic, 
+                      new_retail, 
+                      new_service),
+               names_to = "Variable",
+               values_to = "value") %>%
+  group_by(Variable) %>%
+  summarize(Average = mean(value, na.rm=TRUE),
+            `Standard deviation` = sd(value, na.rm=TRUE),
+            Median = median(value, median(value, na.rm=TRUE)))
+```
