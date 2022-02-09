@@ -169,7 +169,7 @@ denver_tracts_20 <- tracts2019[denver_20,]
 denver_tracts_2.5 <- tracts2019[denver_2.5,]
 ```
 
-##Bringing Data to Excel
+##Combining Tracts and Bringing Data to Excel
 ###Arvada
 ``` {r}
 arvada_tracts_R6 <- arvada_tracts_R6 %>%
@@ -192,11 +192,17 @@ write_csv(arvada_tracts,
 
 ###Aurora
 ``` {r}
-write_csv(aurora_tracts_R3, 
-          "data/aurora/tract_aurora3.csv", 
-          append = FALSE)
-write_csv(aurora_tracts_R4, 
-          "data/aurora/tract_aurora4.csv", 
+aurora_tracts_R3 <- aurora_tracts_R3 %>%
+  mutate(UPA = 3)
+
+aurora_tracts_R4 <- aurora_tracts_R4 %>%
+  mutate(UPA = 4)
+
+aurora_tracts <- rbind(aurora_tracts_R3,
+                       aurora_tracts_R4)
+
+write_csv(aurora_tracts, 
+          "data/aurora/tract_aurora.csv", 
           append = FALSE)
 
 ```
@@ -206,7 +212,6 @@ write_csv(aurora_tracts_R4,
 write_csv(centennial_tracts, 
           "data/centennial/tract_centennial.csv", 
           append = FALSE)
-
 ```
 
 ###Thornton
@@ -214,7 +219,6 @@ write_csv(centennial_tracts,
 write_csv(thornton_tracts, 
           "data/thornton/tract_thornton.csv", 
           append = FALSE)
-
 ```
 
 ###Westminster
@@ -222,27 +226,36 @@ write_csv(thornton_tracts,
 write_csv(westminster_tracts, 
           "data/westminster/tract_westminster.csv", 
           append = FALSE)
-
 ```
 
 ###Denver
 ```{r}
-write_csv(denver_tracts_3, 
-          "data/denver/tract_denver3.csv", 
-          append = FALSE)
-write_csv(denver_tracts_5, 
-          "data/denver/tract_denver5.csv", 
-          append = FALSE)
-write_csv(denver_tracts_8, 
-          "data/denver/tract_denver8.csv", 
-          append = FALSE)
-write_csv(denver_tracts_12, 
-          "data/denver/tract_denver12.csv", 
-          append = FALSE)
-write_csv(denver_tracts_20, 
-          "data/denver/tract_denver20.csv", 
-          append = FALSE)
-write_csv(denver_tracts_2.5, 
-          "data/denver/tract_denver2.5.csv", 
+denver_tracts_2.5 <- denver_tracts_2.5 %>%
+  mutate(UPA = 2.5)
+
+denver_tracts_12 <- denver_tracts_12 %>%
+  mutate(UPA = 12)
+
+denver_tracts_20 <- denver_tracts_20 %>%
+  mutate(UPA = 20)
+
+denver_tracts_3 <- denver_tracts_3 %>%
+  mutate(UPA = 3)
+
+denver_tracts_5 <- denver_tracts_5 %>%
+  mutate(UPA = 5)
+
+denver_tracts_8 <- denver_tracts_8 %>%
+  mutate(UPA = 8)
+
+denver_tracts <- rbind(denver_tracts_2.5,
+                       denver_tracts_12,
+                       denver_tracts_20,
+                       denver_tracts_3,
+                       denver_tracts_5,
+                       denver_tracts_8)
+
+write_csv(denver_tracts, 
+          "data/denver/tract_denver.csv", 
           append = FALSE)
 ```
