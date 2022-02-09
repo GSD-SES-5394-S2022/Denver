@@ -55,9 +55,6 @@ final_tracts_sel <- combinedtracts %>%
 
 ###Combining Original Tracts with New Tract Population/HHs
 ```{r}
-zones <- here("existing/data/zone_data.csv")%>%
-  st_read()
-
 final_tracts <- left_join(zones, final_tracts_sel)
 ```
 ##Visualizing Existing + Proposed Conditions
@@ -77,9 +74,11 @@ existing_pop_map +
 proposed_pop_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_total_tract_population),color=NA)
 
-proposed_pop_map 
+proposed_pop_map +
+    scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
 ```
-###Households
+###Existing Households
 ```{r}
 existing_hh_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = housing_units),color=NA)
@@ -88,8 +87,17 @@ existing_hh_map +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0)
 ```
+###Proposed Households
+```{r}
+proposed_hh_map <- ggplot(final_tracts)+
+  geom_sf(aes(fill = new_total_housing_units),color=NA)
+
+proposed_hh_map +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
+```
 ###Household Incomes
-#### Low
+####Existing Low
 ```{r}
 existing_lowincome_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = hh_income_low),color=NA)
@@ -98,7 +106,16 @@ existing_lowincome_map +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0)
 ```
-#### Mid
+####Proposed Low
+```{r}
+proposed_lowincome_map <- ggplot(final_tracts)+
+  geom_sf(aes(fill = new_hh_income_low),color=NA)
+
+proposed_lowincome_map +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
+```
+####Existing Mid
 ```{r}
 existing_midincome_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = hh_income_mid),color=NA)
@@ -107,7 +124,17 @@ existing_midincome_map +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0)
 ```
-#### High
+
+####Proposed Mid
+```{r}
+proposed_midincome_map <- ggplot(final_tracts)+
+  geom_sf(aes(fill = new_hh_income_mid),color=NA)
+
+proposed_midincome_map +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
+```
+####Existing High
 ```{r}
 existing_highincome_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = hh_income_high),color=NA)
@@ -116,7 +143,17 @@ existing_highincome_map +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0)
 ```
-###Zero Car Households
+####Proposed High
+```{r}
+proposed_highincome_map <- ggplot(final_tracts)+
+  geom_sf(aes(fill = new_hh_income_high),color=NA)
+
+proposed_highincome_map +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
+```
+###Zero Car
+####Existing Zero Car Households
 ```{r}
 existing_nocar_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = nocar),color=NA)
@@ -125,8 +162,16 @@ existing_nocar_map +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0)
 ```
+####Proposed Zero Car Households
+```{r}
+proposed_nocar_map <- ggplot(final_tracts)+
+  geom_sf(aes(fill = new_nocar),color=NA)
 
-###One Person Households
+proposed_nocar_map +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
+```
+###Existing One Person Households
 ```{r}
 existing_oneperson_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = oneperson_hh),color=NA)
@@ -136,7 +181,16 @@ existing_oneperson_map +
                        begin = 1, end = 0)
 ```
 
-###Two Person Households
+###Proposed One Person Households
+```{r}
+proposed_oneperson_map <- ggplot(final_tracts)+
+  geom_sf(aes(fill = new_oneperson_hh),color=NA)
+
+proposed_oneperson_map +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
+```
+###Existing Two Person Households
 ```{r}
 existing_twoperson_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = twoperson_hh),color=NA)
@@ -146,7 +200,17 @@ existing_twoperson_map +
                        begin = 1, end = 0)
 ```
 
-###Basic Employees
+###Proposed Two Person Households
+```{r}
+proposed_twoperson_map <- ggplot(final_tracts)+
+  geom_sf(aes(fill = new_twoperson_hh),color=NA)
+
+proposed_twoperson_map +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
+```
+
+###Existing Basic Employees
 ```{r}
 existing_basic_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = basic_emp),color=NA)
@@ -155,7 +219,17 @@ existing_basic_map +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0)
 ```
-###Service Employees
+
+###Proposed Basic Employees
+```{r}
+proposed_basic_map <- ggplot(final_tracts)+
+  geom_sf(aes(fill = new_basic),color=NA)
+
+proposed_basic_map +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
+```
+###Existing Service Employees
 ```{r}
 existing_service_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = service_emp),color=NA)
@@ -164,12 +238,31 @@ existing_service_map +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0)
 ```
-###Retail Employees
+###Proposed Service Employees
+```{r}
+proposed_service_map <- ggplot(final_tracts)+
+  geom_sf(aes(fill = new_service),color=NA)
+
+proposed_service_map +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
+```
+###Existing Retail Employees
 ```{r}
 existing_retail_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = retail_emp),color=NA)
 
 existing_retail_map +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0)
+```
+
+###Proposed Retail Employees
+```{r}
+proposed_retail_map <- ggplot(final_tracts)+
+  geom_sf(aes(fill = new_retail),color=NA)
+
+proposed_retail_map +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0)
 ```
