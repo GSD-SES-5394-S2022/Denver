@@ -156,7 +156,7 @@ zones <- left_join(tracts2019, lehd_tracts)
 ## Save 
 
 ```{r}
-write_csv(zones, 
+write_csv(zones,
           here("existing", 
                "data", 
                "zone_data.csv"))
