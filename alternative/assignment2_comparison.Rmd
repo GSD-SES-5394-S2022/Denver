@@ -20,7 +20,11 @@ combinedtracts <- here("alternative",
                       "data",
                       "combined_cities",
                       "combined_tracts1.csv") %>%
-  st_read()
+  st_read() %>%
+  mutate(new_basic = as.numeric(new_basic),
+         new_retail = as.numeric(new_retail),
+         new_service = as.numeric(new_service))
+  
 ```
 ### Select relevant city data
 ```{r}

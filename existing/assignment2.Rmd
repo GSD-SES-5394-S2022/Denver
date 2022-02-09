@@ -5,14 +5,19 @@ output: html_document
 # Assignment 2 Zones
 
 ## Load Libraries
+
 ```{r}
 library(ggplot2)
 library(tidyverse)
 library(tidycensus)
+library(sf)
+library(here)
 ```
 
-
 ## Bring in Census Data - Populatio, Housing, Car Availability, Income, Household Size
+
+
+
 ```{r}
 acs_vars <- c(population = "B01003_001", 
         housing_units = "B25001_001", 
@@ -42,6 +47,7 @@ acs_vars <- c(population = "B01003_001",
 
 
 ### Creating Data Frame - Tracts Data
+
 ```{r}
 tracts2019 <- get_acs(geography = "tract", 
                         variables = acs_vars,
@@ -63,6 +69,9 @@ tracts2019 <- get_acs(geography = "tract",
 ```
 
 ### Combine Variables: Low income determined by the poverty line in Colorado
+
+In Colorado, the poverty level is defined as a household income of .... based on this threshold, we'll use ... (explain your reasoning...)
+
 ```{r}
 tracts2019 <- tracts2019 %>%
 mutate(nocar = owner_nocarE + renter_nocarE,
@@ -102,6 +111,7 @@ rename(population = populationE,
 
 
 ## Bring in Employment Data from LEHD
+
 ```{r}
 lehd_blocks <- read_csv('https://lehd.ces.census.gov/data/lodes/LODES7/co/wac/co_wac_S000_JT00_2019.csv.gz', 
                         show_col_types = FALSE) %>%
@@ -127,6 +137,7 @@ lehd_blocks <- read_csv('https://lehd.ces.census.gov/data/lodes/LODES7/co/wac/co
 ```
 
 ### Collapse Data from Census Blocks to Tracts
+
 ```{r}
 lehd_tracts <- lehd_blocks %>%
   mutate(w_geocode = as.character(w_geocode)) %>%
@@ -137,8 +148,14 @@ lehd_tracts <- lehd_blocks %>%
 ```
 
 ## Join Employment and Census Data
+
 ```{r}
 zones <- left_join(tracts2019, lehd_tracts)
 ```
 
+## Save 
+
+```{r}
+write_csv(st_drop_geometry(zones), here("existing", "data", "zone_data.csv"))
+```
 

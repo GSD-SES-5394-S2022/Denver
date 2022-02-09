@@ -172,16 +172,22 @@ denver_tracts_2.5 <- tracts2019[denver_2.5,]
 ##Bringing Data to Excel
 ###Arvada
 ``` {r}
-write_csv(arvada_tracts_R6, 
-          "data/arvada/tract_arvada6.csv", 
-          append = FALSE)
-write_csv(arvada_tracts_R13, 
-          "data/arvada/tract_arvada13.csv", 
-          append = FALSE)
-write_csv(arvada_tracts_R24, 
-          "data/arvada/tract_arvada24.csv", 
-          append = FALSE)
+arvada_tracts_R6 <- arvada_tracts_R6 %>%
+  mutate(UPA = 6)
 
+arvada_tracts_R13 <- arvada_tracts_R13 %>%
+  mutate(UPA = 13)
+
+arvada_tracts_R24 <- arvada_tracts_R24 %>%
+  mutate(UPA = 24)
+
+arvada_tracts <- rbind(arvada_tracts_R6,
+                       arvada_tracts_R13,
+                       arvada_tracts_R24)
+
+write_csv(arvada_tracts, 
+          "data/arvada/tract_arvada.csv", 
+          append = FALSE)
 ```
 
 ###Aurora
