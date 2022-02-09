@@ -3,6 +3,7 @@ title: "assignment2_comparison"
 output: html_document
 ---
 ## Load Libraries
+
 ```{r}
 library(ggplot2)
 library(sf)
