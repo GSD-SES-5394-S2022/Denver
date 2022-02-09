@@ -20,10 +20,20 @@ combinedtracts <- here("alternative",
                       "data",
                       "combined_cities",
                       "combined_tracts1.csv") %>%
+  
   st_read() %>%
   mutate(new_basic = as.numeric(new_basic),
          new_retail = as.numeric(new_retail),
-         new_service = as.numeric(new_service))
+         new_service = as.numeric(new_service),
+         new_oneperson_hh = as.numeric(new_oneperson_hh),
+         new_twoperson_hh = as.numeric(new_twoperson_hh),
+         new_total_tract_population = as.numeric(new_total_tract_population),
+         new_total_housing_units = as.numeric(new_total_housing_units),
+         new_hh_income_low = as.numeric(new_hh_income_low),
+         new_hh_income_mid = as.numeric(new_hh_income_mid),
+         new_hh_income_high = as.numeric(new_hh_income_high),
+         new_nocar = as.numeric(new_nocar))
+         
   
 ```
 ### Select relevant city data
@@ -45,6 +55,9 @@ final_tracts_sel <- combinedtracts %>%
 
 ###Combining Original Tracts with New Tract Population/HHs
 ```{r}
+zones <- here("existing/data/zone_data.csv")%>%
+  st_read()
+
 final_tracts <- left_join(zones, final_tracts_sel)
 ```
 ##Visualizing Existing + Proposed Conditions
