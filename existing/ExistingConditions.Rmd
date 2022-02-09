@@ -1,8 +1,8 @@
 ---
-title: "Assignment2"
+title: "Assignment 2: Establishing and Understanding Existing Zones"
 output: html_document
 ---
-# Assignment 2 Zones
+# Assignment 2: Establishing and Understanding Existing Zones
 
 ## Load Libraries
 
@@ -14,9 +14,9 @@ library(sf)
 library(here)
 ```
 
-## Bring in Census Data - Populatio, Housing, Car Availability, Income, Household Size
+## Gathering Census Data - Population, Housing, Car Ownership, Income, Household Size
 
-
+First, we gathered raw variables from the census related to population, housing units, car ownership, income, and household size. 
 
 ```{r}
 acs_vars <- c(population = "B01003_001", 
@@ -45,8 +45,10 @@ acs_vars <- c(population = "B01003_001",
         nonfam_2person = "B11016_011")
 ```
 
+### Defining Geography
 
-### Creating Data Frame - Tracts Data
+After collecting the variables, we had to define the geography. We want to know about these variables at the tract level in our MSA. We selected this tract information by selecting the 10 counties in the Denver MSA, and we drew from the 2019 5-year ACS. 
+
 
 ```{r}
 tracts2019 <- get_acs(geography = "tract", 
@@ -68,9 +70,15 @@ tracts2019 <- get_acs(geography = "tract",
                         survey = "acs5")
 ```
 
-### Combine Variables: Low income determined by the poverty line in Colorado
+### Combining Variables
 
-In Colorado, the poverty level is defined as a household income of .... based on this threshold, we'll use ... (explain your reasoning...)
+We combined the number of homeowners and renters who have no car into a single no_car variable. 
+
+Similarly, we combined the family and non-family two-person households into a singular twoperson_hh variable.
+
+In Colorado, the poverty level is defined as a household income of about 16,000 dollars for a one-person household or a household income of 33,000 dollars for a four-person household. Based on this, determined that a middle ground of 29,999 dollars would serve as our low-income threshold. We selected middle income households as those ranging from 30,000 dollars to 99,999 dollars, and those households who make 100,000 dollars or more are conisdered to be high-income. We therefore had three variable ranging from low to high income: hh_income_low, hh-income_mid, and hh_income_high.
+
+All other variables remained the same, though we renamed them. 
 
 ```{r}
 tracts2019 <- tracts2019 %>%
@@ -110,7 +118,9 @@ rename(population = populationE,
 ```
 
 
-## Bring in Employment Data from LEHD
+## Gathering Employment Data from LEHD
+
+Next, we gathered employment data at the block level from LEHD and established three variables representing basic employment, retail employment, and service employment. 
 
 ```{r}
 lehd_blocks <- read_csv('https://lehd.ces.census.gov/data/lodes/LODES7/co/wac/co_wac_S000_JT00_2019.csv.gz', 
@@ -138,6 +148,8 @@ lehd_blocks <- read_csv('https://lehd.ces.census.gov/data/lodes/LODES7/co/wac/co
 
 ### Collapse Data from Census Blocks to Tracts
 
+Since we are examining our MSA at the tract level, we collapsed the employment block group data into the tract level. 
+
 ```{r}
 lehd_tracts <- lehd_blocks %>%
   mutate(w_geocode = as.character(w_geocode)) %>%
@@ -147,13 +159,17 @@ lehd_tracts <- lehd_blocks %>%
   summarize(across(everything(), ~sum(.)))
 ```
 
-## Join Employment and Census Data
+## Joining Employment and Census Data
+
+Last, we combined the two sets of data: the variables regarding housing, population, income, and car ownership - and the employment data. The resulting dataframe, zones, contains all of our existing conditions for all of the tracts in the Denver MSA. 
 
 ```{r}
 zones <- left_join(tracts2019, lehd_tracts)
 ```
 
-## Save 
+### Save 
+
+We saved the dataframe into a CSV files to our directory so that it could be used in subsequent markdown files.
 
 ```{r}
 write_csv(zones,
