@@ -1,8 +1,9 @@
 ---
-title: "assignment2_alt"
+title: "Overlaying Multi-Family Zoning and Census Tracts to Calculate Population Increases"
 output: html_document
 ---
 ## Load Libraries
+
 ```{r}
 library(ggplot2)
 library(sf)
@@ -13,15 +14,28 @@ library(units)
 library(here)
 ```
 
-## Bringing in GeoJson data to determine MF zoning
+## Purpose and Goal 
 
-###Arvada
+The overarching purpose of this markdown file was to identify which multifamily zones existed in which tracts. Knowing this would allow us to calculate how many more people we could add to each zone, and therefore each tract, as a result of our proposed FAR increases.
+
+## Bringing in GeoJson/Shapefile data to Select Multi-Family Zones
+
+For each municipality in the Denver MSA, we located a GeoJson or Shapefile data which included the location and information of each municipality's multifamily zones. 
+
+### Arvada
+
+We created a dataframe of Arvada's zoning information by reading a GeoJson file. 
+
 ``` {r}
 arvada_zoning <- here("city_zoning/Arvada/arvada_zoning.geojson") %>%
    st_read()
 
 ```
-#### Arvada MF filter
+
+#### Arvada MF Filter
+
+From the zoning dataframe, we only cared about the multifamily zones since that is where we will be increasing FARs. We created three new data frames for Arvada from the zoning dataframe, one for each multifamily zone. We also changed the coordinate system of these zones so that it would be the same as the census tracts (tracts2019) coordinate system from our first markdown file, ExistingConditions.Rmd.
+
 ``` {r}
 arvada_mf_R6 <- arvada_zoning %>%
   filter(ZONING == "R6")%>%
@@ -37,6 +51,9 @@ arvada_mf_R24 <-arvada_zoning %>%
 ```
 
 ##### Arvada Tract Overlay
+
+Now that we had our census tract geographic information, tracts2019, as well as the multifamily zone information, we needed to know which zones existed in which tracts. We created three final dataframes that each gave us a list of the tracts that contained the type of multifamily zone. 
+
 ```{r}
 arvada_tracts_R6 <- tracts2019[arvada_mf_R6,]
 arvada_tracts_R13 <- tracts2019[arvada_mf_R13,]
@@ -44,12 +61,19 @@ arvada_tracts_R24 <- tracts2019[arvada_mf_R24,]
 ```
 
 ### Aurora 
+
+We created a dataframe of Aurora's zoning information by reading a GeoJson file.
+
 ``` {r}
 aurora_zoning <- here("city_zoning/Aurora/aurora_zoning.geojson") %>%
    st_read()
 
 ```
-#### Aurora MF filter
+
+#### Aurora MF Filter
+
+From the zoning dataframe, we only cared about the multifamily zones since that is where we will be increasing FARs. We created two new data frames for Aurora from the zoning dataframe, one for each multifamily zone. We also changed the coordinate system of these zones so that it would be the same as the census tracts (tracts2019) coordinate system from our first markdown file, ExistingConditions.Rmd.
+
 ``` {r}
 aurora_mf_R3 <- aurora_zoning %>%
   filter(DISTRICT_ID == "R-3") %>%
@@ -62,18 +86,28 @@ aurora_mf_R4 <- aurora_zoning %>%
 ```
 
 ##### Aurora Tract Overlay
+
+Now that we had our census tract geographic information, tracts2019, as well as the multifamily zone information, we needed to know which zones existed in which tracts. We created two final dataframes that each gave us a list of the tracts that contained the type of multifamily zone. 
+
 ```{r}
 aurora_tracts_R3 <- tracts2019[aurora_mf_R3,]
 aurora_tracts_R4 <- tracts2019[aurora_mf_R4,]
 ```
 
 ### Centennial 
+
+We created a dataframe of Centennial's zoning information by reading a GeoJson file.
+
 ``` {r}
 centennial_zoning <- here("city_zoning/Centennial/centennial_zoning.geojson") %>%
    st_read()
 
 ```
-#### Centennial MF filter
+
+#### Centennial MF Filter
+
+From the zoning dataframe, we only cared about the multifamily zones since that is where we will be increasing FARs. Centennial only has one type of multifamily zone, so we created one new data frame for Centennial from the zoning dataframe. We also changed the coordinate system of this zone type so that it would be the same as the census tracts (tracts2019) coordinate system from our first markdown file, ExistingConditions.Rmd.
+
 ``` {r}
 centennial_mf <- centennial_zoning %>%
   filter(ZONECLASS == "RU") %>%
@@ -81,17 +115,27 @@ centennial_mf <- centennial_zoning %>%
 ```
 
 ##### Centennial Tract Overlay
+
+Now that we had our census tract geographic information, tracts2019, as well as the multifamily zone information, we needed know which which tracts contained this zone. We created a final dataframe that gave us a list of the tracts that contained this type of multifamily zone. 
+
 ```{r}
 centennial_tracts <- tracts2019[centennial_mf,]
 ```
 
 ### Thornton 
+
+We created a dataframe of Thornton's zoning information by reading a GeoJson file.
+
 ``` {r}
 thornton_zoning <- here("city_zoning/Thornton/thornton_zoning.geojson") %>%
    st_read()
 
 ```
-#### Thornton MF filter
+
+#### Thornton MF Filter
+
+From the zoning dataframe, we only cared about the multifamily zones since that is where we will be increasing FARs. Thornton only has one type of multifamily zone, so we created one new data frame for Thornton from the zoning dataframe. We also changed the coordinate system of this zone type so that it would be the same as the census tracts (tracts2019) coordinate system from our first markdown file, ExistingConditions.Rmd.
+
 ``` {r}
 thornton_mf <- thornton_zoning %>%
   filter(DISTRICT == "MF") %>%
@@ -99,17 +143,27 @@ thornton_mf <- thornton_zoning %>%
 ```
 
 ##### Thornton Tract Overlay
+
+Now that we had our census tract geographic information, tracts2019, as well as the multifamily zone information, we needed know which tracts contained this zone. We created a final dataframe that gave us a list of the tracts that contained this type of multifamily zone. 
+
 ```{r}
 thornton_tracts <- tracts2019[thornton_mf,]
 ```
 
 ### Westminster 
+
+We created a dataframe of Westminster's zoning information by reading a GeoJson file.
+
 ``` {r}
 westminster_zoning <- here("city_zoning/Westminster/westminster_zoning.geojson") %>%
    st_read()
 
 ```
-#### Westminster MF filter
+
+#### Westminster MF Filter
+
+From the zoning dataframe, we only cared about the multifamily zones since that is where we will be increasing FARs. Westimnster has two types of multifamily zones, but they each have the same existing FARs. So we combined the two multifamily zones into one and created one new data frame for Westminster. We also changed the coordinate system of this zone type so that it would be the same as the census tracts (tracts2019) coordinate system from our first markdown file, ExistingConditions.Rmd.
+
 ``` {r}
 westminster_mf <- westminster_zoning %>%
   filter(ZONECODE == c("R-3", "R-4")) %>%
@@ -117,17 +171,27 @@ westminster_mf <- westminster_zoning %>%
 ```
 
 ##### Westminster Tract Overlay
+
+Now that we had our census tract geographic information, tracts2019, as well as the multifamily zone information, we needed know which tracts contained this zone. We created a final dataframe that gave us a list of the tracts that contained this type of multifamily zone. 
+
 ```{r}
 westminster_tracts <- tracts2019[westminster_mf,]
 ```
 
 ### Denver 
+
+We created a dataframe of Denver's zoning information by reading a Shapefile file.
+
 ``` {r}
 denver_zoning <- here("city_zoning/denver/denver_zoning/zoning.shp") %>%
    st_read()
 
 ```
-#### Denver MF filter
+
+#### Denver MF Filter
+
+From the zoning dataframe, we only cared about the multifamily zones since that is where we will be increasing FARs. We created six new data frames for Denver from the zoning dataframe, one for each multifamily zone. We also changed the coordinate system of these zones so that it would be the same as the census tracts (tracts2019) coordinate system from our first markdown file, ExistingConditions.Rmd.
+
 ``` {r}
 denver_3 <- denver_zoning %>%
   filter(ZONE_DIS_1 == c("S-MU-3", "G-MU-3")) %>%
@@ -155,6 +219,9 @@ denver_2.5 <- denver_zoning %>%
 ```
 
 ##### Denver Tract Overlay
+
+Now that we had our census tract geographic information, tracts2019, as well as the multifamily zone information, we needed to know which zones existed in which tracts. We created six final dataframes that each gave us a list of the tracts that contained the type of multifamily zone. 
+
 ```{r}
 denver_tracts_3 <- tracts2019[denver_3,]
 
@@ -169,8 +236,14 @@ denver_tracts_20 <- tracts2019[denver_20,]
 denver_tracts_2.5 <- tracts2019[denver_2.5,]
 ```
 
-##Combining Tracts and Bringing Data to Excel
+##Combining Dataframes and Bringing Data to Excel
+
+We chose to use Excel to calculate how many people we would add to each tract depending on the multifamily zones in it. As such, we had to create a singular csv file for each municipality that contained all of the tracts in it that contained multifamily zoning. 
+
 ###Arvada
+
+We discovered late that we didnt't need to export three CSV files, and then combine the data in a final CSV file on Excel. Here, we learned how to used the rbind() function. The result was a csv file that contained all of Arvada's tracts that contained multifamily zoning. 
+
 ``` {r}
 arvada_tracts_R6 <- arvada_tracts_R6 %>%
   mutate(UPA = 6)
@@ -191,6 +264,9 @@ write_csv(arvada_tracts,
 ```
 
 ###Aurora
+
+Here we followed the same steps as Arvada. 
+
 ``` {r}
 aurora_tracts_R3 <- aurora_tracts_R3 %>%
   mutate(UPA = 3)
@@ -208,6 +284,9 @@ write_csv(aurora_tracts,
 ```
 
 ###Centennial
+
+Here we just saved the Centennial tracts that contain multifamily zoning as a csv. 
+
 ``` {r}
 write_csv(centennial_tracts, 
           "data/centennial/tract_centennial.csv", 
@@ -215,6 +294,9 @@ write_csv(centennial_tracts,
 ```
 
 ###Thornton
+
+Here we just saved the Thornton tracts that contain multifamily zoning as a csv. 
+
 ``` {r}
 write_csv(thornton_tracts, 
           "data/thornton/tract_thornton.csv", 
@@ -222,6 +304,9 @@ write_csv(thornton_tracts,
 ```
 
 ###Westminster
+
+Here we just saved the Westminster tracts that contain multifamily zoning as a csv. 
+
 ``` {r}
 write_csv(westminster_tracts, 
           "data/westminster/tract_westminster.csv", 
@@ -229,6 +314,9 @@ write_csv(westminster_tracts,
 ```
 
 ###Denver
+
+Here we followed the same steps as Arvada. 
+
 ```{r}
 denver_tracts_2.5 <- denver_tracts_2.5 %>%
   mutate(UPA = 2.5)
@@ -259,3 +347,26 @@ write_csv(denver_tracts,
           "data/denver/tract_denver.csv", 
           append = FALSE)
 ```
+
+## Work in ArcGis Pro and Excel
+
+Once we had all of these csv files downloaded and open in Excel, we followed the same procedure for each city to calculate the new population for each tract. I'll use Denver as the example, but it's the same process for each one. 
+
+1. First, we opened ArcGIS Pro and we mapped the Census Tracts of the MSA and Denver's Zoning map. We displayed only the multifamily zones from the zoning map. 
+
+2. Second, we opened the Denver spreadsheet on Excel that contained a list of every single tract that contained multifamily zoning. 
+
+3. We went tract by tract on Excel, selecting each multifamily zone to discover its area in square feet. 
+
+-For example, let's say that Tract A had only one type of multi family zone, MU3. We would click on the zone's attribute table, copy the area in square feet, and paste it into the Tract A row of my spreadsheet under a new column 'Area'.
+
+-Let's say that Tract B had two types of zoning, MU3 and MU5. We would again click on each zone within Tract B, and then copy that area into TWO rows in the spreadsheet: the Tract B row that also contained MU3, and the Tract B row that also contained MU5. 
+
+4. Once we finished gathering this data, we determined the total existing possible build-out of a multi family zone by multiplying its existing square feet by the exsting FAR. So if in Tract A MU3 had an area of 2000 feet and an existing FAR of 1.5, we determined that the possible buildout of housing would be 3000 square feet. This amounts to 3 housing units. Then we determined the new possible buildout with the new FAR. So if the new FAR was 3, then the new possible buildout of housing became 6000 square feet. This amounts to 6 housing units. To determine the increase in population due to this FAR change, we first determined the average household size for Tract A. If the average household size was 2, then that means the existing possible build out would have a population of 6 people, and the new possible buildout would have a population of 12 people. Therefore, the difference between these two possible buildouts is the addition of people to the tract. 
+
+5. In tracts where two or more multifamily zones existed, such as in Tract B, we followed the same steps as in Step 4, and at the end combined the new population by MF zone to determine the total new population of Tract B. 
+
+6. For variable such as Car Ownership, Income, Employment, and Household size, we maintained the same proportion of each subpopulation in the new population as in the existing population. 
+
+7. After completing this for each tract and for each city, we combined all of the cities into one final csv file, combined_tracts1.csv.
+
