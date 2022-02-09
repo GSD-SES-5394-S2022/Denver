@@ -66,7 +66,13 @@ existing_pop_map <- ggplot(final_tracts)+
 
 existing_pop_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Tract Population",
+                       breaks = size_brks <- seq(0, 15000, by = 2500),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "People"))
 ```
 ####Proposed Population
 
@@ -76,7 +82,13 @@ proposed_pop_map <- ggplot(final_tracts)+
 
 proposed_pop_map +
     scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed Tract Population",
+                       breaks = size_brks <- seq(0, 40000, by = 10000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "People"))
 ```
 ###Existing Households
 ```{r}
@@ -85,7 +97,13 @@ existing_hh_map <- ggplot(final_tracts)+
 
 existing_hh_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Tract Housing Units",
+                       breaks = size_brks <- seq(0, 7000, by = 1000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Units"))
 ```
 ###Proposed Households
 ```{r}
@@ -94,7 +112,13 @@ proposed_hh_map <- ggplot(final_tracts)+
 
 proposed_hh_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed Tract Housing Units",
+                       breaks = size_brks <- seq(0, 15000, by = 2500),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Units"))
 ```
 ###Household Incomes
 ####Existing Low
@@ -104,7 +128,13 @@ existing_lowincome_map <- ggplot(final_tracts)+
 
 existing_lowincome_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Low Income Households",
+                       breaks = size_brks <- seq(0, 1200, by = 200),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 ####Proposed Low
 ```{r}
@@ -113,8 +143,15 @@ proposed_lowincome_map <- ggplot(final_tracts)+
 
 proposed_lowincome_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed Low Income Households",
+                       breaks = size_brks <- seq(0, 2500, by = 500),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
+
 ####Existing Mid
 ```{r}
 existing_midincome_map <- ggplot(final_tracts)+
@@ -122,7 +159,13 @@ existing_midincome_map <- ggplot(final_tracts)+
 
 existing_midincome_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Mid Income Households",
+                       breaks = size_brks <- seq(0, 2000, by = 500),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 
 ####Proposed Mid
@@ -132,7 +175,13 @@ proposed_midincome_map <- ggplot(final_tracts)+
 
 proposed_midincome_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed Mid Income Households",
+                       breaks = size_brks <- seq(0, 6000, by = 1000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 ####Existing High
 ```{r}
@@ -141,7 +190,13 @@ existing_highincome_map <- ggplot(final_tracts)+
 
 existing_highincome_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "High Income Households",
+                       breaks = size_brks <- seq(0, 3500, by = 1000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 ####Proposed High
 ```{r}
@@ -150,7 +205,13 @@ proposed_highincome_map <- ggplot(final_tracts)+
 
 proposed_highincome_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed High Income Households",
+                       breaks = size_brks <- seq(0, 12000, by = 2000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 ###Zero Car
 ####Existing Zero Car Households
@@ -160,7 +221,13 @@ existing_nocar_map <- ggplot(final_tracts)+
 
 existing_nocar_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Zero Car Households",
+                       breaks = size_brks <- seq(0, 1200, by = 200),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 ####Proposed Zero Car Households
 ```{r}
@@ -169,7 +236,13 @@ proposed_nocar_map <- ggplot(final_tracts)+
 
 proposed_nocar_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed Zero Car Households",
+                       breaks = size_brks <- seq(0, 2000, by = 500),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 ###Existing One Person Households
 ```{r}
@@ -178,7 +251,13 @@ existing_oneperson_map <- ggplot(final_tracts)+
 
 existing_oneperson_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "One-Person Households",
+                       breaks = size_brks <- seq(0, 3000, by = 500),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 
 ###Proposed One Person Households
@@ -188,7 +267,13 @@ proposed_oneperson_map <- ggplot(final_tracts)+
 
 proposed_oneperson_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed One-Person Households",
+                       breaks = size_brks <- seq(0, 8000, by = 1200),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 ###Existing Two Person Households
 ```{r}
@@ -197,7 +282,13 @@ existing_twoperson_map <- ggplot(final_tracts)+
 
 existing_twoperson_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Two-Person Households",
+                       breaks = size_brks <- seq(0, 2500, by = 500),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 
 ###Proposed Two Person Households
@@ -207,7 +298,13 @@ proposed_twoperson_map <- ggplot(final_tracts)+
 
 proposed_twoperson_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed Two-Person Households",
+                       breaks = size_brks <- seq(0, 10000, by = 2000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Households"))
 ```
 
 ###Existing Basic Employees
@@ -217,7 +314,13 @@ existing_basic_map <- ggplot(final_tracts)+
 
 existing_basic_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Basic Employees",
+                       breaks = size_brks <- seq(0, 15000, by = 3000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Employees"))
 ```
 
 ###Proposed Basic Employees
@@ -227,7 +330,13 @@ proposed_basic_map <- ggplot(final_tracts)+
 
 proposed_basic_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed Basic Employees",
+                       breaks = size_brks <- seq(0, 30000, by = 5000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Employees"))
 ```
 ###Existing Service Employees
 ```{r}
@@ -236,7 +345,13 @@ existing_service_map <- ggplot(final_tracts)+
 
 existing_service_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Service Employees",
+                       breaks = size_brks <- seq(0, 60000, by = 10000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Employees"))
 ```
 ###Proposed Service Employees
 ```{r}
@@ -245,7 +360,13 @@ proposed_service_map <- ggplot(final_tracts)+
 
 proposed_service_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed Service Employees",
+                       breaks = size_brks <- seq(0, 90000, by = 15000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Employees"))
 ```
 ###Existing Retail Employees
 ```{r}
@@ -254,7 +375,13 @@ existing_retail_map <- ggplot(final_tracts)+
 
 existing_retail_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Retail Employees",
+                       breaks = size_brks <- seq(0, 5000, by = 1000),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Employees"))
 ```
 
 ###Proposed Retail Employees
@@ -264,5 +391,11 @@ proposed_retail_map <- ggplot(final_tracts)+
 
 proposed_retail_map +
   scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0)
+                       begin = 1, end = 0,
+                       name = "Proposed Retail Employees",
+                       breaks = size_brks <- seq(0, 15000, by = 2500),
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Employees"))
 ```
