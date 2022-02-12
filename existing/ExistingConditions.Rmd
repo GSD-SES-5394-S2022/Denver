@@ -7,7 +7,6 @@ output: html_document
 ## Load Libraries
 
 ```{r}
-library(ggplot2)
 library(tidyverse)
 library(tidycensus)
 library(sf)
@@ -82,24 +81,32 @@ All other variables remained the same, though we renamed them.
 
 ```{r}
 tracts2019 <- tracts2019 %>%
-mutate(nocar = owner_nocarE + renter_nocarE,
-       twoperson_hh = fam_2personE + nonfam_2personE,
-       hh_income_low = hh_income_10kE + 
+mutate(nocar = 
+         owner_nocarE + 
+         renter_nocarE,
+       twoperson_hh = 
+         fam_2personE + 
+         nonfam_2personE,
+       hh_income_low = 
+         hh_income_10kE + 
          hh_income_15kE + 
          hh_income_20kE + 
          hh_income_25kE,
-       hh_income_mid = hh_income_30kE + 
+       hh_income_mid = 
+         hh_income_30kE + 
          hh_income_35kE + 
          hh_income_40kE + 
          hh_income_45kE +
          hh_income_50kE + 
          hh_income_60kE + 
          hh_income_75kE,
-       hh_income_high = hh_income_100kE +
+       hh_income_high = 
+         hh_income_100kE +
          hh_income_125kE + 
          hh_income_150kE + 
          hh_income_200kE + 
          hh_income_200kplusE) %>%
+  
   select(GEOID, 
          nocar,
          populationE, 
@@ -111,10 +118,14 @@ mutate(nocar = owner_nocarE + renter_nocarE,
          oneperson_hhE,
          twoperson_hh) %>%
 
-rename(population = populationE,
-       housing_units = housing_unitsE,
-       hh_total = hh_totalE,
-       oneperson_hh = oneperson_hhE)
+rename(population = 
+         populationE,
+       housing_units = 
+         housing_unitsE,
+       hh_total = 
+         hh_totalE,
+       oneperson_hh = 
+         oneperson_hhE)
 ```
 
 
@@ -126,7 +137,8 @@ Next, we gathered employment data at the block level from LEHD and established t
 lehd_blocks <- read_csv('https://lehd.ces.census.gov/data/lodes/LODES7/co/wac/co_wac_S000_JT00_2019.csv.gz', 
                         show_col_types = FALSE) %>%
   rename(total_emp = C000) %>%
-  mutate(basic_emp = CNS01+
+  mutate(basic_emp = 
+           CNS01+
            CNS02+
            CNS03+
            CNS04+
@@ -152,8 +164,10 @@ Since we are examining our MSA at the tract level, we collapsed the employment b
 
 ```{r}
 lehd_tracts <- lehd_blocks %>%
-  mutate(w_geocode = as.character(w_geocode)) %>%
-  mutate(GEOID = substr(w_geocode, 1, 11)) %>%
+  mutate(w_geocode = 
+           as.character(w_geocode)) %>%
+  mutate(GEOID = 
+           substr(w_geocode, 1, 11)) %>%
   select(-w_geocode) %>%
   group_by(GEOID) %>%
   summarize(across(everything(), ~sum(.)))

@@ -13,6 +13,7 @@ library(sp)
 library(units)
 library(here)
 library(png)
+library(ggthemes)
 ```
 
 ### Bringing in our Combined Census Tract Data
@@ -26,17 +27,28 @@ combinedtracts <- here("alternative",
                       "combined_tracts1.csv") %>%
   
   st_read() %>%
-  mutate(new_basic = as.numeric(new_basic),
-         new_retail = as.numeric(new_retail),
-         new_service = as.numeric(new_service),
-         new_oneperson_hh = as.numeric(new_oneperson_hh),
-         new_twoperson_hh = as.numeric(new_twoperson_hh),
-         new_total_tract_population = as.numeric(new_total_tract_population),
-         new_total_housing_units = as.numeric(new_total_housing_units),
-         new_hh_income_low = as.numeric(new_hh_income_low),
-         new_hh_income_mid = as.numeric(new_hh_income_mid),
-         new_hh_income_high = as.numeric(new_hh_income_high),
-         new_nocar = as.numeric(new_nocar))
+  mutate(new_basic = 
+           as.numeric(new_basic),
+         new_retail = 
+           as.numeric(new_retail),
+         new_service = 
+           as.numeric(new_service),
+         new_oneperson_hh = 
+           as.numeric(new_oneperson_hh),
+         new_twoperson_hh = 
+           as.numeric(new_twoperson_hh),
+         new_total_tract_population = 
+           as.numeric(new_total_tract_population),
+         new_total_housing_units = 
+           as.numeric(new_total_housing_units),
+         new_hh_income_low = 
+           as.numeric(new_hh_income_low),
+         new_hh_income_mid = 
+           as.numeric(new_hh_income_mid),
+         new_hh_income_high = 
+           as.numeric(new_hh_income_high),
+         new_nocar = 
+           as.numeric(new_nocar))
          
   
 ```
@@ -82,21 +94,24 @@ Finally, we displayed comparison maps for each variable which compared the exist
 existing_pop_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = population),color=NA)
 
-existing_pop_map +
+existing_pop_map + 
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Tract Population",
-                       breaks = size_brks <- seq(0, 15000, by = 2500),
+                       breaks = size_brks <- seq(0, 40000, by = 10000),
                        labels = paste(formatC(size_brks,
                                               format="f",
                                               digits=0),
                                       "People"))
 
-ggsave("population_tract.pdf", existing_pop_map+
+ggsave("population_tract.pdf", 
+  existing_pop_map + 
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Tract Population",
-                       breaks = size_brks <- seq(0, 15000, by = 2500),
+                       breaks = size_brks <- seq(0, 40000, by = 10000),
                        labels = paste(formatC(size_brks,
                                               format="f",
                                               digits=0),
@@ -108,7 +123,9 @@ ggsave("population_tract.pdf", existing_pop_map+
 proposed_pop_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_total_tract_population),color=NA)
 
-proposed_pop_map + scale_fill_viridis_c(option = "D",
+proposed_pop_map + 
+  theme_void() +
+  scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Tract Population",
                        breaks = size_brks <- seq(0, 40000, by = 10000),
@@ -117,8 +134,10 @@ proposed_pop_map + scale_fill_viridis_c(option = "D",
                                               digits=0),
                                       "People"))
 
-ggsave("proposed_population.pdf", proposed_pop_map +
-    scale_fill_viridis_c(option = "D",
+ggsave("proposed_population.pdf", 
+  proposed_pop_map + 
+  theme_void() +
+  scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Tract Population",
                        breaks = size_brks <- seq(0, 40000, by = 10000),
@@ -135,6 +154,7 @@ existing_hh_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = housing_units),color=NA)
 
 existing_hh_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Tract Housing Units",
@@ -144,7 +164,9 @@ existing_hh_map +
                                               digits=0),
                                       "Units"))
 
-ggsave("existing_hh.pdf", existing_hh_map +
+ggsave("existing_hh.pdf", 
+  existing_hh_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Tract Housing Units",
@@ -162,6 +184,7 @@ proposed_hh_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_total_housing_units),color=NA)
 
 proposed_hh_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Tract Housing Units",
@@ -172,7 +195,8 @@ proposed_hh_map +
                                       "Units"))
 
 ggsave("proposed_hh.pdf", 
-proposed_hh_map +
+  proposed_hh_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Tract Housing Units",
@@ -192,6 +216,7 @@ existing_lowincome_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = hh_income_low),color=NA)
 
 existing_lowincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Low Income Households",
@@ -201,7 +226,9 @@ existing_lowincome_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("existing_lowincome.pdf", existing_lowincome_map +
+ggsave("existing_lowincome.pdf", 
+  existing_lowincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Low Income Households",
@@ -219,6 +246,7 @@ proposed_lowincome_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_hh_income_low),color=NA)
 
 proposed_lowincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Low Income Households",
@@ -228,7 +256,9 @@ proposed_lowincome_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("proposed_lowincome.pdf", proposed_lowincome_map +
+ggsave("proposed_lowincome.pdf", 
+  proposed_lowincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Low Income Households",
@@ -246,6 +276,7 @@ existing_midincome_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = hh_income_mid),color=NA)
 
 existing_midincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Mid Income Households",
@@ -255,7 +286,9 @@ existing_midincome_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("existing_midincome.pdf", existing_midincome_map +
+ggsave("existing_midincome.pdf", 
+  existing_midincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Mid Income Households",
@@ -273,6 +306,7 @@ proposed_midincome_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_hh_income_mid),color=NA)
 
 proposed_midincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Mid Income Households",
@@ -282,7 +316,8 @@ proposed_midincome_map +
                                               digits=0),
                                       "Households"))
 ggsave("proposed_midincome.pdf", 
-proposed_midincome_map +
+  proposed_midincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Mid Income Households",
@@ -300,6 +335,7 @@ existing_highincome_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = hh_income_high),color=NA)
 
 existing_highincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "High Income Households",
@@ -309,7 +345,9 @@ existing_highincome_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("existing_highincome.pdf", existing_highincome_map +
+ggsave("existing_highincome.pdf", 
+  existing_highincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "High Income Households",
@@ -327,6 +365,7 @@ proposed_highincome_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_hh_income_high),color=NA)
 
 proposed_highincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed High Income Households",
@@ -336,7 +375,9 @@ proposed_highincome_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("propose_highincome.pdf", proposed_highincome_map +
+ggsave("propose_highincome.pdf", 
+  proposed_highincome_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed High Income Households",
@@ -356,6 +397,7 @@ existing_nocar_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = nocar),color=NA)
 
 existing_nocar_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Zero Car Households",
@@ -365,7 +407,9 @@ existing_nocar_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("existing_nocar.pdf", existing_nocar_map +
+ggsave("existing_nocar.pdf", 
+  existing_nocar_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Zero Car Households",
@@ -383,6 +427,7 @@ proposed_nocar_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_nocar),color=NA)
 
 proposed_nocar_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Zero Car Households",
@@ -392,7 +437,9 @@ proposed_nocar_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("proposed_nocar.pdf", proposed_nocar_map +
+ggsave("proposed_nocar.pdf", 
+  proposed_nocar_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Zero Car Households",
@@ -412,6 +459,7 @@ existing_oneperson_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = oneperson_hh),color=NA)
 
 existing_oneperson_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "One-Person Households",
@@ -421,7 +469,9 @@ existing_oneperson_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("existing_oneperson.pdf", existing_oneperson_map +
+ggsave("existing_oneperson.pdf", 
+  existing_oneperson_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "One-Person Households",
@@ -439,6 +489,7 @@ proposed_oneperson_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_oneperson_hh),color=NA)
 
 proposed_oneperson_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed One-Person Households",
@@ -448,7 +499,9 @@ proposed_oneperson_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("proposed_oneperson.pdf", proposed_oneperson_map +
+ggsave("proposed_oneperson.pdf",
+  proposed_oneperson_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed One-Person Households",
@@ -466,6 +519,7 @@ existing_twoperson_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = twoperson_hh),color=NA)
 
 existing_twoperson_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Two-Person Households",
@@ -475,7 +529,9 @@ existing_twoperson_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("existing_twoperson.pdf", existing_twoperson_map +
+ggsave("existing_twoperson.pdf", 
+  existing_twoperson_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Two-Person Households",
@@ -493,6 +549,7 @@ proposed_twoperson_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_twoperson_hh),color=NA)
 
 proposed_twoperson_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Two-Person Households",
@@ -502,7 +559,9 @@ proposed_twoperson_map +
                                               digits=0),
                                       "Households"))
 
-ggsave("proposed_twoperson.pdf", proposed_twoperson_map +
+ggsave("proposed_twoperson.pdf", 
+  proposed_twoperson_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Two-Person Households",
@@ -522,6 +581,7 @@ existing_basic_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = basic_emp),color=NA)
 
 existing_basic_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Basic Employees",
@@ -531,7 +591,9 @@ existing_basic_map +
                                               digits=0),
                                       "Employees"))
 
-ggsave("existing_basic.pdf", existing_basic_map +
+ggsave("existing_basic.pdf",
+  existing_basic_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Basic Employees",
@@ -549,6 +611,7 @@ proposed_basic_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_basic),color=NA)
 
 proposed_basic_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Basic Employees",
@@ -558,7 +621,9 @@ proposed_basic_map +
                                               digits=0),
                                       "Employees"))
 
-ggsave("proposed_basic.pdf", proposed_basic_map +
+ggsave("proposed_basic.pdf",
+  proposed_basic_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Basic Employees",
@@ -576,6 +641,7 @@ existing_service_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = service_emp),color=NA)
 
 existing_service_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Service Employees",
@@ -585,7 +651,9 @@ existing_service_map +
                                               digits=0),
                                       "Employees"))
 
-ggsave("existing_service.pdf", existing_service_map +
+ggsave("existing_service.pdf",
+  existing_service_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Service Employees",
@@ -603,6 +671,7 @@ proposed_service_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_service),color=NA)
 
 proposed_service_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Service Employees",
@@ -612,7 +681,9 @@ proposed_service_map +
                                               digits=0),
                                       "Employees"))
 
-ggsave("proposed_service.pdf", proposed_service_map +
+ggsave("proposed_service.pdf",
+  proposed_service_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Service Employees",
@@ -630,6 +701,7 @@ existing_retail_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = retail_emp),color=NA)
 
 existing_retail_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Retail Employees",
@@ -639,7 +711,9 @@ existing_retail_map +
                                               digits=0),
                                       "Employees"))
 
-ggsave("existing_retail.pdf", existing_retail_map +
+ggsave("existing_retail.pdf",
+  existing_retail_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Retail Employees",
@@ -657,6 +731,7 @@ proposed_retail_map <- ggplot(final_tracts)+
   geom_sf(aes(fill = new_retail),color=NA)
 
 proposed_retail_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Retail Employees",
@@ -666,7 +741,9 @@ proposed_retail_map +
                                               digits=0),
                                       "Employees"))
 
-ggsave("proposed_retail.pdf", proposed_retail_map +
+ggsave("proposed_retail.pdf", 
+  proposed_retail_map +
+  theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Retail Employees",
