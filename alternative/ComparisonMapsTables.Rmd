@@ -96,6 +96,8 @@ existing_pop_map <- ggplot(final_tracts)+
 
 existing_pop_map + 
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Tract Population",
@@ -107,7 +109,9 @@ existing_pop_map +
                                       "People"))
 
 ggsave("population_tract.pdf", 
-  existing_pop_map + 
+  existing_pop_map +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
@@ -127,6 +131,8 @@ proposed_pop_map <- ggplot(final_tracts)+
 
 proposed_pop_map + 
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Tract Population",
@@ -140,6 +146,8 @@ proposed_pop_map +
 ggsave("proposed_population.pdf", 
   proposed_pop_map + 
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Tract Population",
@@ -159,6 +167,8 @@ existing_hh_map <- ggplot(final_tracts)+
 
 existing_hh_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Tract Housing Units",
@@ -172,6 +182,8 @@ existing_hh_map +
 ggsave("existing_hh.pdf", 
   existing_hh_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Tract Housing Units",
@@ -191,6 +203,8 @@ proposed_hh_map <- ggplot(final_tracts)+
 
 proposed_hh_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Tract Housing Units",
@@ -204,6 +218,8 @@ proposed_hh_map +
 ggsave("proposed_hh.pdf", 
   proposed_hh_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Tract Housing Units",
@@ -225,6 +241,8 @@ existing_lowincome_map <- ggplot(final_tracts)+
 
 existing_lowincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Low Income Households",
@@ -238,6 +256,8 @@ existing_lowincome_map +
 ggsave("existing_lowincome.pdf", 
   existing_lowincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Low Income Households",
@@ -257,6 +277,8 @@ proposed_lowincome_map <- ggplot(final_tracts)+
 
 proposed_lowincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Low Income Households",
@@ -270,6 +292,8 @@ proposed_lowincome_map +
 ggsave("proposed_lowincome.pdf", 
   proposed_lowincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Low Income Households",
@@ -289,6 +313,8 @@ existing_midincome_map <- ggplot(final_tracts)+
 
 existing_midincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Mid Income Households",
@@ -302,6 +328,8 @@ existing_midincome_map +
 ggsave("existing_midincome.pdf", 
   existing_midincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Mid Income Households",
@@ -321,6 +349,8 @@ proposed_midincome_map <- ggplot(final_tracts)+
 
 proposed_midincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Mid Income Households",
@@ -333,6 +363,8 @@ proposed_midincome_map +
 ggsave("proposed_midincome.pdf", 
   proposed_midincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Mid Income Households",
@@ -352,6 +384,8 @@ existing_highincome_map <- ggplot(final_tracts)+
 
 existing_highincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "High Income Households",
@@ -365,6 +399,8 @@ existing_highincome_map +
 ggsave("existing_highincome.pdf", 
   existing_highincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "High Income Households",
@@ -384,6 +420,8 @@ proposed_highincome_map <- ggplot(final_tracts)+
 
 proposed_highincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed High Income Households",
@@ -397,6 +435,8 @@ proposed_highincome_map +
 ggsave("propose_highincome.pdf", 
   proposed_highincome_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed High Income Households",
@@ -418,6 +458,8 @@ existing_nocar_map <- ggplot(final_tracts)+
 
 existing_nocar_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Zero Car Households",
@@ -431,6 +473,8 @@ existing_nocar_map +
 ggsave("existing_nocar.pdf", 
   existing_nocar_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Zero Car Households",
@@ -450,6 +494,8 @@ proposed_nocar_map <- ggplot(final_tracts)+
 
 proposed_nocar_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Zero Car Households",
@@ -463,6 +509,8 @@ proposed_nocar_map +
 ggsave("proposed_nocar.pdf", 
   proposed_nocar_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Zero Car Households",
@@ -484,6 +532,8 @@ existing_oneperson_map <- ggplot(final_tracts)+
 
 existing_oneperson_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "One-Person Households",
@@ -497,6 +547,8 @@ existing_oneperson_map +
 ggsave("existing_oneperson.pdf", 
   existing_oneperson_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "One-Person Households",
@@ -516,6 +568,8 @@ proposed_oneperson_map <- ggplot(final_tracts)+
 
 proposed_oneperson_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed One-Person Households",
@@ -529,6 +583,8 @@ proposed_oneperson_map +
 ggsave("proposed_oneperson.pdf",
   proposed_oneperson_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed One-Person Households",
@@ -548,6 +604,8 @@ existing_twoperson_map <- ggplot(final_tracts)+
 
 existing_twoperson_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Two-Person Households",
@@ -561,6 +619,8 @@ existing_twoperson_map +
 ggsave("existing_twoperson.pdf", 
   existing_twoperson_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Two-Person Households",
@@ -580,6 +640,8 @@ proposed_twoperson_map <- ggplot(final_tracts)+
 
 proposed_twoperson_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Two-Person Households",
@@ -593,6 +655,8 @@ proposed_twoperson_map +
 ggsave("proposed_twoperson.pdf", 
   proposed_twoperson_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Two-Person Households",
@@ -614,6 +678,8 @@ existing_basic_map <- ggplot(final_tracts)+
 
 existing_basic_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Basic Employees",
@@ -627,6 +693,8 @@ existing_basic_map +
 ggsave("existing_basic.pdf",
   existing_basic_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Basic Employees",
@@ -646,6 +714,8 @@ proposed_basic_map <- ggplot(final_tracts)+
 
 proposed_basic_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Basic Employees",
@@ -659,6 +729,8 @@ proposed_basic_map +
 ggsave("proposed_basic.pdf",
   proposed_basic_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Basic Employees",
@@ -678,6 +750,8 @@ existing_service_map <- ggplot(final_tracts)+
 
 existing_service_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Service Employees",
@@ -691,6 +765,8 @@ existing_service_map +
 ggsave("existing_service.pdf",
   existing_service_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Service Employees",
@@ -710,6 +786,8 @@ proposed_service_map <- ggplot(final_tracts)+
 
 proposed_service_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Service Employees",
@@ -723,6 +801,8 @@ proposed_service_map +
 ggsave("proposed_service.pdf",
   proposed_service_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Service Employees",
@@ -742,6 +822,8 @@ existing_retail_map <- ggplot(final_tracts)+
 
 existing_retail_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Retail Employees",
@@ -754,6 +836,8 @@ existing_retail_map +
 
 ggsave("existing_retail.pdf",
   existing_retail_map +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   theme_void() +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
@@ -774,6 +858,8 @@ proposed_retail_map <- ggplot(final_tracts)+
 
 proposed_retail_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Retail Employees",
@@ -787,6 +873,8 @@ proposed_retail_map +
 ggsave("proposed_retail.pdf", 
   proposed_retail_map +
   theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
   scale_fill_viridis_c(option = "D",
                        begin = 1, end = 0,
                        name = "Proposed Retail Employees",
