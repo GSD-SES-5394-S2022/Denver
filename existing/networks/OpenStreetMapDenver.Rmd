@@ -4,27 +4,29 @@ author: "Miguel Perez Luna"
 date: "2/17/2022"
 output: html_document
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
+library(sf)
+library(tigris)
+library(tidyverse)
+library(osmdata)
+library(here)
 ```
 
-## R Markdown
+# Downloading the OpenStreetMap Network for the Denver MSA
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+# Load the MSA boundaries
+boundary <- core_based_statistical_areas() %>%
+  filter(GEOID == "19740")
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+# Define a bounding box containing the MSA
+denver_bbox <- st_bbox(boundary)
 
-```{r cars}
-summary(cars)
+q <- opq(bbox = denver_bbox) %>% # create a query
+  add_osm_feature(key = 'highway') %>% # request only road data
+  osmdata_xml(file = here("existing/networks/streets.osm")) # download osm file
 ```
 
-## Including Plots
+# Convert the OSM file to a PBF file
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+We did this using Homebrew, in the Mac Terminal, and with Arnav's help.
