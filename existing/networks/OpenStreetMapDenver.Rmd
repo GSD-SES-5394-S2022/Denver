@@ -10,6 +10,7 @@ library(tigris)
 library(tidyverse)
 library(osmdata)
 library(here)
+library(tidytransit)
 ```
 
 # Downloading the OpenStreetMap Network for the Denver MSA
@@ -30,3 +31,7 @@ q <- opq(bbox = denver_bbox) %>% # create a query
 # Convert the OSM file to a PBF file
 
 We did this using Homebrew, in the Mac Terminal, and with Arnav's help.
+
+# Downloading GTFS Data
+
+We used rtidy transit and view(feedlist) to find the url for the Denver GTFS data.
