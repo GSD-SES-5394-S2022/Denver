@@ -41,35 +41,10 @@ We used tidytransit and view(feedlist) to find the url for the Denver GTFS data.
 
 # Creating Zone centroids (PUT ON HOLD)
 
-```{r}
-msaboundaries <- st_read(here("zones",
-          "cb_2018_us_cbsa_500k",
-          "cb_2018_us_cbsa_500k.shp"))
-
-CO_tractboundaries <- st_read(here("zones",
-              "cb_2018_08_tract_500k",
-              "cb_2018_08_tract_500k.shp"))
-```
-
-```{r}
-msa_tracts <- CO_tractboundaries %>%
-  filter(COUNTYFP == c("031",
-                       "005", 
-                       "059",
-                       "001",
-                       "035",
-                       "047",
-                       "019",
-                       "039",
-                       "093",
-                       "014"))
-  
-```
 
 ```{r}
 centroids <- here("zones",
-              "cb_2018_08_tract_500k",
-              "cb_2018_08_tract_500k.shp") %>%
+                  "boundaries.geojson") %>%
   
   st_read() %>%
   st_centroid() %>%
@@ -77,3 +52,20 @@ centroids <- here("zones",
   rename(id = GEOID)
 ```
 
+```{r}
+st_write(centroids, here("zones","centroids.geojson"))
+```
+
+# Adding memory for Java
+
+```{r}
+options(java.parameters = "-Xmx2G")
+```
+
+# Alternative Core
+
+```{r}
+alternative_core <- here("alternative",
+                         "networks") %>%
+    setup_r5(verbose = FALSE)
+```
