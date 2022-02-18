@@ -57,6 +57,8 @@ centroids <- here("zones",
 
 ```{r}
 options(java.parameters = "-Xmx2G")
+
+library(r5r)
 ```
 
 # Alternative Core
