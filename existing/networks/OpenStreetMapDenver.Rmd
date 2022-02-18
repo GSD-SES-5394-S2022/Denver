@@ -52,9 +52,6 @@ centroids <- here("zones",
   rename(id = GEOID)
 ```
 
-```{r}
-st_write(centroids, here("zones","centroids.geojson"))
-```
 
 # Adding memory for Java
 
@@ -65,7 +62,18 @@ options(java.parameters = "-Xmx2G")
 # Alternative Core
 
 ```{r}
-alternative_core <- here("alternative",
-                         "networks") %>%
-    setup_r5(verbose = FALSE)
+alternative_core <- here("existing",
+                      "networks") %>%
+  setup_r5(verbose = FALSE)
+```
+
+# Generating Skims
+
+## Driving Skims
+
+```{r}
+car_skim <- travel_time_matrix(alternative_core,
+                               origins = centroids,
+                               destinations = centroids,
+                               mode = "CAR")
 ```

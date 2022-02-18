@@ -82,6 +82,9 @@ Last, we combined the Existing Conditions Tract Data from our first markdown fil
 final_tracts <- left_join(zones, final_tracts_sel)
 ```
 
+
+
+
 ##Visualizing Existing and Proposed Conditions
 
 Finally, we displayed comparison maps for each variable which compared the existing conditions of our tracts to the proposed conditions of our tracts. We did this using ggplot. We also saved each map as a pdf file for later addition to our report. 
