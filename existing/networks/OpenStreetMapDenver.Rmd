@@ -11,6 +11,7 @@ library(tidyverse)
 library(osmdata)
 library(here)
 library(tidytransit)
+library(r5r)
 ```
 
 # Downloading the OpenStreetMap Network for the Denver MSA
@@ -34,4 +35,45 @@ We did this using Homebrew, in the Mac Terminal, and with Arnav's help.
 
 # Downloading GTFS Data
 
-We used rtidy transit and view(feedlist) to find the url for the Denver GTFS data.
+We used tidytransit and view(feedlist) to find the url for the Denver GTFS data.
+
+# Installing 
+
+# Creating Zone centroids (PUT ON HOLD)
+
+```{r}
+msaboundaries <- st_read(here("zones",
+          "cb_2018_us_cbsa_500k",
+          "cb_2018_us_cbsa_500k.shp"))
+
+CO_tractboundaries <- st_read(here("zones",
+              "cb_2018_08_tract_500k",
+              "cb_2018_08_tract_500k.shp"))
+```
+
+```{r}
+msa_tracts <- CO_tractboundaries %>%
+  filter(COUNTYFP == c("031",
+                       "005", 
+                       "059",
+                       "001",
+                       "035",
+                       "047",
+                       "019",
+                       "039",
+                       "093",
+                       "014"))
+  
+```
+
+```{r}
+centroids <- here("zones",
+              "cb_2018_08_tract_500k",
+              "cb_2018_08_tract_500k.shp") %>%
+  
+  st_read() %>%
+  st_centroid() %>%
+  st_transform("WGS84") %>%
+  rename(id = GEOID)
+```
+
