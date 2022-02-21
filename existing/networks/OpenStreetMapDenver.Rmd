@@ -73,6 +73,14 @@ alternative_core <- here("existing",
 
 ## Driving Skims
 
+We ran stop_r5() after many failed attempts at running a skim, thinking mabybe there was a backlog of skims which was maybe impacting memory space.
+
+```{r}
+stop_r5()
+```
+
+
+
 ```{r}
 car_skim <- travel_time_matrix(alternative_core,
                                origins = centroids,
