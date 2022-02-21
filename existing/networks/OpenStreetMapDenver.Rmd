@@ -11,7 +11,7 @@ library(tidyverse)
 library(osmdata)
 library(here)
 library(tidytransit)
-library(r5r)
+
 ```
 
 # Downloading the OpenStreetMap Network for the Denver MSA
