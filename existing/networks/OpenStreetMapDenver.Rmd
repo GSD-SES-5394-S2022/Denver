@@ -73,7 +73,7 @@ alternative_core <- here("existing",
 
 ## Driving Skims
 
-We ran stop_r5() after many failed attempts at running a skim, thinking mabybe there was a backlog of skims which was maybe impacting memory space.
+We ran stop_r5() after many failed attempts at running a skim, thinking mabybe there was a backlog of skims which was maybe impacting memory space, but that didn't help. We didn't run it before trying a skim a second time. 
 
 ```{r}
 stop_r5()
