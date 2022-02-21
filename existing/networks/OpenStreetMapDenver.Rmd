@@ -39,7 +39,7 @@ We used tidytransit and view(feedlist) to find the url for the Denver GTFS data.
 
 # Installing 
 
-# Creating Zone centroids (PUT ON HOLD)
+# Creating Zone centroids
 
 
 ```{r}
@@ -56,7 +56,7 @@ centroids <- here("zones",
 # Adding memory for Java
 
 ```{r}
-options(java.parameters = '-Xmx2G')
+options(java.parameters = "-Xmx4G")
 
 library(r5r)
 ```
