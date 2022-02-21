@@ -44,7 +44,7 @@ We used tidytransit and view(feedlist) to find the url for the Denver GTFS data.
 
 ```{r}
 centroids <- here("zones",
-                  "boundaries.geojson") %>%
+                  "boundaries1.geojson") %>%
   
   st_read() %>%
   st_centroid() %>%
@@ -56,7 +56,7 @@ centroids <- here("zones",
 # Adding memory for Java
 
 ```{r}
-options(java.parameters = "-Xmx2G")
+options(java.parameters = '-Xmx2G')
 
 library(r5r)
 ```

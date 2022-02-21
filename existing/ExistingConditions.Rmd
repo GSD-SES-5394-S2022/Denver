@@ -191,7 +191,7 @@ zone_boundaries <- zones %>%
 ```
 
 ```{r}
-st_write(zone_boundaries, "boundaries.geojson", append = FALSE)
+st_write(zone_boundaries, "boundaries1.geojson", append = FALSE)
 ```
 
 
