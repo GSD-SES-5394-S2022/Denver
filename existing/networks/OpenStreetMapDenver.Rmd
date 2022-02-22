@@ -72,16 +72,21 @@ alternative_core <- here("existing",
 # Generating Skims
 
 ## Driving Skims
-
-<<<<<<< HEAD
 ```{r}
 car_skim <- travel_time_matrix(alternative_core,
                                origins = centroids,
                                destinations = centroids,
                                mode = "CAR")
 ```
-=======
->>>>>>> 09b887285f4d781b169d56385ee97893772a7f4b
+Save car skim
+
+```{r}
+write_csv(car_skim, file = here("existing",
+                                "data",
+                                "car_skim.csv"))
+```
+
+I do *not* recommend running the travel_time_matrix for cars again, since it takes almost 2 hours. Just read it from the csv file to work with it further. 
 
 ## Walking Skims
 
@@ -98,7 +103,6 @@ walk_skim <- travel_time_matrix(alternative_core,
 bicycle_skim <- travel_time_matrix(alternative_core,
                                origins = centroids,
                                destinations = centroids,
-<<<<<<< HEAD
                                mode = "BICYCLE")
 ```
 
@@ -111,24 +115,8 @@ transit_skim <- travel_time_matrix(alternative_core,
                      origins = centroids,
                      destinations = centroids,
                      mode = "TRANSIT",
-                     departure_datetime = ymd_hm("2021-12-04 17:00"),
+                     departure_datetime = ymd_hm("2021-12-04 23:00"),
                      breakdown = TRUE)
-```
-
-We ran stop_r5() after many failed attempts at running a skim, thinking mabybe there was a backlog of skims which was maybe impacting memory space, but that didn't help. We didn't run it before trying a skim a second time. 
-
-```{r}
-stop_r5()
-```
-
-``` {r}
-transit_skim_alt <- transit_skim_alt %>%
-  filter(n_rides > 0)
-```
-
-=======
-                               mode = "CAR",
-                               verbose = FALSE)
 ```
 
 Stop r5
@@ -137,13 +125,23 @@ Stop r5
 stop_r5()
 ```
 
-Save car skim
-
-```{r}
-write_csv(car_skim, file = here("existing",
-                                "data",
-                                "car_skim.csv"))
+``` {r}
+transit_skim <- transit_skim %>%
+  filter(n_rides > 0)
 ```
 
-I do *not* recommend running the travel_time_matrix for cars again, since it takes almost 2 hours. Just read it from the csv file to work with it further. 
->>>>>>> 09b887285f4d781b169d56385ee97893772a7f4b
+```{r}
+car_skim <- read_csv(here("existing/data/car_skim.csv")) %>%
+  rename(car_time = travel_time) 
+
+transit_skim <- transit_skim %>%
+  rename(transit_time = travel_time) 
+
+walk_skim <- walk_skim %>%
+  rename(walk_time = travel_time)
+
+all_skims <- full_join(transit_skim, car_skim) %>%
+  full_join(walk_skim)
+
+write_csv(all_skims, here("alternative/data/skims.csv"))
+```
