@@ -73,17 +73,52 @@ alternative_core <- here("existing",
 
 ## Driving Skims
 
-We ran stop_r5() after many failed attempts at running a skim, thinking mabybe there was a backlog of skims which was maybe impacting memory space, but that didn't help. We didn't run it before trying a skim a second time. 
-
-```{r}
-stop_r5()
-```
-
-
-
 ```{r}
 car_skim <- travel_time_matrix(alternative_core,
                                origins = centroids,
                                destinations = centroids,
                                mode = "CAR")
 ```
+
+## Walking Skims
+
+```{r}
+walk_skim <- travel_time_matrix(alternative_core,
+                               origins = centroids,
+                               destinations = centroids,
+                               mode = "WALK")
+```
+
+## Bicycle Skims
+
+```{r}
+bicycle_skim <- travel_time_matrix(alternative_core,
+                               origins = centroids,
+                               destinations = centroids,
+                               mode = "BICYCLE")
+```
+
+## Transit Skims
+
+```{r}
+library(lubridate)
+
+transit_skim <- travel_time_matrix(alternative_core, 
+                     origins = centroids,
+                     destinations = centroids,
+                     mode = "TRANSIT",
+                     departure_datetime = ymd_hm("2021-12-04 17:00"),
+                     breakdown = TRUE)
+```
+
+We ran stop_r5() after many failed attempts at running a skim, thinking mabybe there was a backlog of skims which was maybe impacting memory space, but that didn't help. We didn't run it before trying a skim a second time. 
+
+```{r}
+stop_r5()
+```
+
+``` {r}
+transit_skim_alt <- transit_skim_alt %>%
+  filter(n_rides > 0)
+```
+
