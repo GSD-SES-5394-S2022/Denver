@@ -115,7 +115,7 @@ transit_skim <- travel_time_matrix(alternative_core,
                      origins = centroids,
                      destinations = centroids,
                      mode = "TRANSIT",
-                     departure_datetime = ymd_hm("2021-12-04 23:00"),
+                     departure_datetime = ymd_hm("2022-02-22 17:00"),
                      breakdown = TRUE)
 ```
 
