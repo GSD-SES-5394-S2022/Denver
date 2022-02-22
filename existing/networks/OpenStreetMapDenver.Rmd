@@ -73,11 +73,6 @@ alternative_core <- here("existing",
 
 ## Driving Skims
 
-We ran stop_r5() after many failed attempts at running a skim, thinking mabybe there was a backlog of skims which was maybe impacting memory space, but that didn't help. We didn't run it before trying a skim a second time. 
-
-```{r}
-stop_r5()
-```
 
 
 
@@ -85,5 +80,22 @@ stop_r5()
 car_skim <- travel_time_matrix(alternative_core,
                                origins = centroids,
                                destinations = centroids,
-                               mode = "CAR")
+                               mode = "CAR",
+                               verbose = FALSE)
 ```
+
+Stop r5
+
+```{r}
+stop_r5()
+```
+
+Save car skim
+
+```{r}
+write_csv(car_skim, file = here("existing",
+                                "data",
+                                "car_skim.csv"))
+```
+
+I do *not* recommend running the travel_time_matrix for cars again, since it takes almost 2 hours. Just read it from the csv file to work with it further. 
