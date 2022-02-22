@@ -73,12 +73,15 @@ alternative_core <- here("existing",
 
 ## Driving Skims
 
+<<<<<<< HEAD
 ```{r}
 car_skim <- travel_time_matrix(alternative_core,
                                origins = centroids,
                                destinations = centroids,
                                mode = "CAR")
 ```
+=======
+>>>>>>> 09b887285f4d781b169d56385ee97893772a7f4b
 
 ## Walking Skims
 
@@ -95,6 +98,7 @@ walk_skim <- travel_time_matrix(alternative_core,
 bicycle_skim <- travel_time_matrix(alternative_core,
                                origins = centroids,
                                destinations = centroids,
+<<<<<<< HEAD
                                mode = "BICYCLE")
 ```
 
@@ -122,3 +126,24 @@ transit_skim_alt <- transit_skim_alt %>%
   filter(n_rides > 0)
 ```
 
+=======
+                               mode = "CAR",
+                               verbose = FALSE)
+```
+
+Stop r5
+
+```{r}
+stop_r5()
+```
+
+Save car skim
+
+```{r}
+write_csv(car_skim, file = here("existing",
+                                "data",
+                                "car_skim.csv"))
+```
+
+I do *not* recommend running the travel_time_matrix for cars again, since it takes almost 2 hours. Just read it from the csv file to work with it further. 
+>>>>>>> 09b887285f4d781b169d56385ee97893772a7f4b
