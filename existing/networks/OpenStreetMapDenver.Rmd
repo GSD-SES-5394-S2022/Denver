@@ -15,6 +15,9 @@ library(osmdata)
 library(here)
 library(tidytransit)
 library(lubridate)
+library(ggplot2)
+library(ggthemes)
+library(RColorBrewer)
 
 ```
 
@@ -116,8 +119,6 @@ gtfs <- here("existing",
 
 
 ```{r}
-
-
 transit_skim <- travel_time_matrix(alternative_core, 
                      origins = centroids,
                      destinations = centroids,
@@ -151,5 +152,56 @@ walk_skim <- walk_skim %>%
 all_skims <- full_join(transit_skim, car_skim) %>%
   full_join(walk_skim)
 
-write_csv(all_skims, here("alternative/data/skims.csv"))
+write_csv(all_skims, here("existing/data/skims.csv"))
+```
+##Mapping skims
+```{r}
+centroid_map <- ggplot(final_tracts) + 
+  geom_sf(data = final_tracts, color = "BLACK", fill = "WHITE") +
+  geom_sf(data = centroids, color = "BLUE")
+
+centroid_map + 
+  theme_void() 
+ 
+ggsave("centroids.pdf",
+  centroid_map +
+  theme_void())
+```
+
+##Mapping Commute times for tract with most jobs
+```{r}
+car_mat_exist <- all_skims %>% 
+  select(fromId, toId, car_time) %>%
+  pivot_wider(names_from = toId, 
+              values_from = car_time) %>%
+  column_to_rownames("fromId")
+
+```
+```{r}
+map_palette <- brewer.pal(5, "YlOrBr")
+
+existing_max_diff <- car_mat_exist %>%
+  rownames_to_column("GEOID" )%>%
+  select(GEOID, '08031001702') %>%
+  rename(existing = '08031001702')
+
+zones <- here("zones",
+                  "boundaries1.geojson") %>%
+  
+  st_read() %>%
+  inner_join(existing_max_diff)
+```
+
+```{r}
+map_existing <- ggplot(zones) +
+  geom_sf(aes(fill = existing),
+          color = NA) +
+  geom_sf(data = zones[zones$GEOID=="08031001702",],
+          fill = "BLACK",
+          color = "BLACK")+
+  scale_fill_gradientn(colours = map_palette,
+                      name = "Travel Time") +
+  theme_void()
+
+map_existing
 ```
