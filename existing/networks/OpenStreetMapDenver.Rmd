@@ -151,5 +151,5 @@ walk_skim <- walk_skim %>%
 all_skims <- full_join(transit_skim, car_skim) %>%
   full_join(walk_skim)
 
-write_csv(all_skims, here("alternative/data/skims.csv"))
+write_csv(all_skims, here("existing/data/skims.csv"))
 ```
