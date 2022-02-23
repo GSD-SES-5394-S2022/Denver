@@ -5,12 +5,15 @@ date: "2/17/2022"
 output: html_document
 ---
 ```{r}
-library(sf)
+options(java.parameters = "-Xmx4G")
+
+library(r5r)library(sf)
 library(tigris)
 library(tidyverse)
 library(osmdata)
 library(here)
 library(tidytransit)
+library(lubridate)
 
 ```
 
@@ -52,15 +55,6 @@ centroids <- here("zones",
   rename(id = GEOID)
 ```
 
-
-# Adding memory for Java
-
-```{r}
-options(java.parameters = "-Xmx4G")
-
-library(r5r)
-```
-
 # Alternative Core
 
 ```{r}
@@ -76,8 +70,10 @@ alternative_core <- here("existing",
 car_skim <- travel_time_matrix(alternative_core,
                                origins = centroids,
                                destinations = centroids,
-                               mode = "CAR")
+                               mode = "CAR", 
+                               verbose = FALSE)
 ```
+
 Save car skim
 
 ```{r}
@@ -108,15 +104,26 @@ bicycle_skim <- travel_time_matrix(alternative_core,
 
 ## Transit Skims
 
+### Check GTFS feed
+
 ```{r}
-library(lubridate)
+gtfs <- here("existing",
+             "networks",
+             "gtfs.zip") %>%
+  read_gtfs()
+```
+
+
+```{r}
+
 
 transit_skim <- travel_time_matrix(alternative_core, 
                      origins = centroids,
                      destinations = centroids,
                      mode = "TRANSIT",
                      departure_datetime = ymd_hm("2022-02-22 17:00"),
-                     breakdown = TRUE)
+                     breakdown = TRUE,
+                     verbose = FALSE)
 ```
 
 Stop r5
