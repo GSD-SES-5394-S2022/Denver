@@ -149,8 +149,12 @@ transit_skim <- transit_skim %>%
 walk_skim <- walk_skim %>%
   rename(walk_time = travel_time)
 
+bicycle_skim <- bicycle_skim %>%
+  rename(bicycle_time = travel_time)
+
 all_skims <- full_join(transit_skim, car_skim) %>%
-  full_join(walk_skim)
+  full_join(walk_skim) %>%
+  full_join(bicycle_skim)
 
 write_csv(all_skims, here("existing/data/skims.csv"))
 ```
@@ -170,38 +174,149 @@ ggsave("centroids.pdf",
 
 ##Mapping Commute times for tract with most jobs
 ```{r}
+#Reshape travel time for all modes
 car_mat_exist <- all_skims %>% 
   select(fromId, toId, car_time) %>%
   pivot_wider(names_from = toId, 
               values_from = car_time) %>%
   column_to_rownames("fromId")
 
-```
-```{r}
-map_palette <- brewer.pal(5, "YlOrBr")
+walk_mat_exist <- all_skims %>% 
+  select(fromId, toId, walk_time) %>%
+  pivot_wider(names_from = toId, 
+              values_from = walk_time) %>%
+  column_to_rownames("fromId")
 
-existing_max_diff <- car_mat_exist %>%
+bike_mat_exist <- all_skims %>% 
+  select(fromId, toId, bicycle_time) %>%
+  pivot_wider(names_from = toId, 
+              values_from = bicycle_time) %>%
+  column_to_rownames("fromId")
+
+transit_mat_exist <- all_skims %>% 
+  select(fromId, toId, transit_time) %>%
+  pivot_wider(names_from = toId, 
+              values_from = transit_time) %>%
+  column_to_rownames("fromId")
+```
+
+```{r}
+#Joining times to boundaries
+existing_car <- car_mat_exist %>%
   rownames_to_column("GEOID" )%>%
   select(GEOID, '08031001702') %>%
   rename(existing = '08031001702')
 
-zones <- here("zones",
+zones_car <- here("zones",
                   "boundaries1.geojson") %>%
   
   st_read() %>%
-  inner_join(existing_max_diff)
+  inner_join(existing_car)
+
+existing_walk <- walk_mat_exist %>%
+  rownames_to_column("GEOID" )%>%
+  select(GEOID, '08031001702') %>%
+  rename(existing = '08031001702')
+
+zones_walk <- here("zones",
+                  "boundaries1.geojson") %>%
+  
+  st_read() %>%
+  inner_join(existing_walk)
+
+existing_bike <- bike_mat_exist %>%
+  rownames_to_column("GEOID" )%>%
+  select(GEOID, '08031001702') %>%
+  rename(existing = '08031001702')
+
+zones_bike <- here("zones",
+                  "boundaries1.geojson") %>%
+  
+  st_read() %>%
+  inner_join(existing_bike)
+
+existing_transit <- transit_mat_exist %>%
+  rownames_to_column("GEOID" )%>%
+  select(GEOID, '08031001702') %>%
+  rename(existing = '08031001702')
+
+zones_transit <- here("zones",
+                  "boundaries1.geojson") %>%
+  
+  st_read() %>%
+  inner_join(existing_transit)
 ```
 
 ```{r}
-map_existing <- ggplot(zones) +
+#Mapping each travel type
+map_palette <- brewer.pal(5, "YlOrBr")
+
+cartravel_map <- ggplot(zones_car) +
   geom_sf(aes(fill = existing),
           color = NA) +
-  geom_sf(data = zones[zones$GEOID=="08031001702",],
+  geom_sf(data = zones_car[zones_car$GEOID=="08031001702",],
           fill = "BLACK",
           color = "BLACK")+
   scale_fill_gradientn(colours = map_palette,
-                      name = "Travel Time") +
+                      name = "Car Travel Time") +
   theme_void()
 
-map_existing
+cartravel_map
+
+ggsave("cartraveltime.pdf",
+  cartravel_map +
+  theme_void())
+```
+
+```{r}
+walktravel_map <- ggplot(zones_walk) +
+  geom_sf(aes(fill = existing),
+          color = NA) +
+  geom_sf(data = zones_walk[zones_walk$GEOID=="08031001702",],
+          fill = "BLACK",
+          color = "BLACK")+
+  scale_fill_gradientn(colours = map_palette,
+                      name = "Walk Travel Time") +
+  theme_void()
+
+walktravel_map
+
+ggsave("walktraveltime.pdf",
+  walktravel_map +
+  theme_void())
+```
+```{r}
+biketravel_map <- ggplot(zones_bike) +
+  geom_sf(aes(fill = existing),
+          color = NA) +
+  geom_sf(data = zones_bike[zones_bike$GEOID=="08031001702",],
+          fill = "BLACK",
+          color = "BLACK")+
+  scale_fill_gradientn(colours = map_palette,
+                      name = "Bike Travel Time") +
+  theme_void()
+
+biketravel_map
+
+ggsave("biketraveltime.pdf",
+  biketravel_map +
+  theme_void())
+```
+
+```{r}
+transittravel_map <- ggplot(zones_transit) +
+  geom_sf(aes(fill = existing),
+          color = NA) +
+  geom_sf(data = zones_transit[zones_transit$GEOID=="08031001702",],
+          fill = "BLACK",
+          color = "BLACK")+
+  scale_fill_gradientn(colours = map_palette,
+                      name = "Transit Travel Time") +
+  theme_void()
+
+transittravel_map
+
+ggsave("transittraveltime.pdf",
+  transittravel_map +
+  theme_void())
 ```
