@@ -186,9 +186,13 @@ zones <- left_join(tracts2019, lehd_tracts)
 We saved the dataframe into a CSV files to our directory so that it could be used in subsequent markdown files.
 
 ```{r}
-write_csv(zones,
-          here("existing", 
-               "data", 
-               "zone_data.csv"))
+zone_boundaries <- zones %>%
+  select(GEOID, geometry)
 ```
+
+```{r}
+st_write(zone_boundaries, "boundaries1.geojson", append = FALSE)
+```
+
+
 

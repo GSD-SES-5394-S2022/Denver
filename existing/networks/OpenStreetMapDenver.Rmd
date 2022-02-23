@@ -1,0 +1,147 @@
+---
+title: "OpenStreetMap"
+author: "Miguel Perez Luna"
+date: "2/17/2022"
+output: html_document
+---
+```{r}
+library(sf)
+library(tigris)
+library(tidyverse)
+library(osmdata)
+library(here)
+library(tidytransit)
+
+```
+
+# Downloading the OpenStreetMap Network for the Denver MSA
+
+```{r}
+# Load the MSA boundaries
+boundary <- core_based_statistical_areas() %>%
+  filter(GEOID == "19740")
+
+# Define a bounding box containing the MSA
+denver_bbox <- st_bbox(boundary)
+
+q <- opq(bbox = denver_bbox) %>% # create a query
+  add_osm_feature(key = 'highway') %>% # request only road data
+  osmdata_xml(file = here("existing/networks/streets.osm")) # download osm file
+```
+
+# Convert the OSM file to a PBF file
+
+We did this using Homebrew, in the Mac Terminal, and with Arnav's help.
+
+# Downloading GTFS Data
+
+We used tidytransit and view(feedlist) to find the url for the Denver GTFS data.
+
+# Installing 
+
+# Creating Zone centroids
+
+
+```{r}
+centroids <- here("zones",
+                  "boundaries1.geojson") %>%
+  
+  st_read() %>%
+  st_centroid() %>%
+  st_transform("WGS84") %>%
+  rename(id = GEOID)
+```
+
+
+# Adding memory for Java
+
+```{r}
+options(java.parameters = "-Xmx4G")
+
+library(r5r)
+```
+
+# Alternative Core
+
+```{r}
+alternative_core <- here("existing",
+                      "networks") %>%
+  setup_r5(verbose = FALSE)
+```
+
+# Generating Skims
+
+## Driving Skims
+```{r}
+car_skim <- travel_time_matrix(alternative_core,
+                               origins = centroids,
+                               destinations = centroids,
+                               mode = "CAR")
+```
+Save car skim
+
+```{r}
+write_csv(car_skim, file = here("existing",
+                                "data",
+                                "car_skim.csv"))
+```
+
+I do *not* recommend running the travel_time_matrix for cars again, since it takes almost 2 hours. Just read it from the csv file to work with it further. 
+
+## Walking Skims
+
+```{r}
+walk_skim <- travel_time_matrix(alternative_core,
+                               origins = centroids,
+                               destinations = centroids,
+                               mode = "WALK")
+```
+
+## Bicycle Skims
+
+```{r}
+bicycle_skim <- travel_time_matrix(alternative_core,
+                               origins = centroids,
+                               destinations = centroids,
+                               mode = "BICYCLE")
+```
+
+## Transit Skims
+
+```{r}
+library(lubridate)
+
+transit_skim <- travel_time_matrix(alternative_core, 
+                     origins = centroids,
+                     destinations = centroids,
+                     mode = "TRANSIT",
+                     departure_datetime = ymd_hm("2022-02-22 17:00"),
+                     breakdown = TRUE)
+```
+
+Stop r5
+
+```{r}
+stop_r5()
+```
+
+``` {r}
+transit_skim <- transit_skim %>%
+  filter(n_rides > 0)
+```
+
+```{r}
+car_skim <- read_csv(here("existing/data/car_skim.csv")) %>%
+  rename(car_time = travel_time) 
+
+transit_skim <- transit_skim %>%
+  rename(transit_time = travel_time) 
+
+walk_skim <- walk_skim %>%
+  rename(walk_time = travel_time)
+
+all_skims <- full_join(transit_skim, car_skim) %>%
+  full_join(walk_skim)
+
+write_csv(all_skims, here("alternative/data/skims.csv"))
+```
