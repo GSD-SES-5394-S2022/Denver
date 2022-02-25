@@ -104,7 +104,24 @@ transit_access_existing <- accessibility(existing_core,
                                      time_window = 120)
 ```
 
+# Setting up Centroid Information for Proposed Conditions
 
+```{r}
+
+jobs_proposed <- here("existing",
+             "data",
+             "zone_data.csv") %>%
+    read_csv() %>%
+    select(GEOID, total_emp) %>%
+    mutate(GEOID = as.character(GEOID)) %>%
+    rename(id = GEOID)
+
+centroids_jobs <- here("zones",
+                  "centroids.geojson") %>%
+    st_read() %>%
+    left_join(jobs) 
+
+```
 
 
 ```{r}
