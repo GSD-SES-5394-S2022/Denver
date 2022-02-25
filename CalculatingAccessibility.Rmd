@@ -5,7 +5,7 @@ date: "2/25/2022"
 output: html_document
 ---
 ```{r}
-options(java.parameters = '-Xmx2G')
+options(java.parameters = '-Xmx4G')
 
 library(r5r)
 library(here)
@@ -37,5 +37,33 @@ centroids_jobs <- here("zones",
     st_read() %>%
     left_join(jobs) 
 
+```
+
+# Setting up r5r
+
+```{r}
+existing_core <- here("existing",
+                      "networks") %>%
+  setup_r5(verbose = FALSE)
+```
+
+# Calculating accessibility for non-transit modes
+
+## Calculating accessibility for cars
+
+```{r}
+car_access_existing <- accessibility(existing_core,
+                                     origins = centroids_jobs,
+                                     destinations = centroids_jobs,
+                                     opportunities_colname = 'total_emp',
+                                     mode = "CAR",
+                                     decay_function = "logistic",
+                                     cutoffs = 15,
+                                     decay_value = 2, 
+                                     verbose = FALSE)
+```
+
+```{r}
+stop_r5()
 ```
 
