@@ -20,10 +20,6 @@ Here we are attaching information about the number of jobs at each destination t
 
 ```{r}
 
-# First we are writing our centroids data frame as a geojson
-
-st_write(centroids, here("zones","centroids.geojson"))
-
 jobs <- here("existing",
              "data",
              "zone_data.csv") %>%
