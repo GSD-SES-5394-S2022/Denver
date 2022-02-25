@@ -43,7 +43,7 @@ existing_core <- here("existing",
   setup_r5(verbose = FALSE)
 ```
 
-# Calculating accessibility for non-transit modes
+# Calculating accessibility for non-transit modes under existing conditions
 
 ## Calculating accessibility for cars
 
@@ -58,6 +58,54 @@ car_access_existing <- accessibility(existing_core,
                                      decay_value = 2, 
                                      verbose = FALSE)
 ```
+
+## Calculating accessibility for pedestrians
+
+```{r}
+walk_access_existing <- accessibility(existing_core,
+                                     origins = centroids_jobs,
+                                     destinations = centroids_jobs,
+                                     opportunities_colname = 'total_emp',
+                                     mode = "WALK",
+                                     decay_function = "logistic",
+                                     cutoffs = 15,
+                                     decay_value = 2, 
+                                     verbose = FALSE)
+```
+
+## Calculating accessibility for bicyclists
+
+```{r}
+bike_access_existing <- accessibility(existing_core,
+                                     origins = centroids_jobs,
+                                     destinations = centroids_jobs,
+                                     opportunities_colname = 'total_emp',
+                                     mode = "BICYCLE",
+                                     decay_function = "logistic",
+                                     cutoffs = 15,
+                                     decay_value = 2, 
+                                     verbose = FALSE)
+```
+
+## Calculating accessibility for transit
+
+```{r}
+transit_access_existing <- accessibility(existing_core,
+                                     origins = centroids_jobs,
+                                     destinations = centroids_jobs,
+                                     opportunities_colname = 'total_emp',
+                                     mode = "TRANSIT",
+                                     decay_function = "logistic",
+                                     cutoffs = 15,
+                                     decay_value = 2, 
+                                     verbose = FALSE,
+                                     departure_datetime = 
+                                       ymd_hm("2022-02-22 17:00"),
+                                     time_window = 120)
+```
+
+
+
 
 ```{r}
 stop_r5()
