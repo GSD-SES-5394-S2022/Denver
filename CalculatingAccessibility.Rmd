@@ -1,0 +1,41 @@
+---
+title: "CalculatingAccessibility"
+author: "Miguel Perez Luna"
+date: "2/25/2022"
+output: html_document
+---
+```{r}
+options(java.parameters = '-Xmx2G')
+
+library(r5r)
+library(here)
+library(tidyverse)
+library(sf)
+library(lubridate)
+```
+
+# Setting up Centroid Information for Existing Conditions
+
+Here we are attaching information about the number of jobs at each destination to our set of centroids. 
+
+```{r}
+
+# First we are writing our centroids data frame as a geojson
+
+st_write(centroids, here("zones","centroids.geojson"))
+
+jobs <- here("existing",
+             "data",
+             "zone_data.csv") %>%
+    read_csv() %>%
+    select(GEOID, total_emp) %>%
+    mutate(GEOID = as.character(GEOID)) %>%
+    rename(id = GEOID)
+
+centroids_jobs <- here("zones",
+                  "centroids.geojson") %>%
+    st_read() %>%
+    left_join(jobs) 
+
+```
+
