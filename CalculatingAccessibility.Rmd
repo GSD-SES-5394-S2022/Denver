@@ -183,6 +183,12 @@ walk_access_alt <- accessibility(existing_core,
                                      verbose = FALSE)
 ```
 
+```{r}
+write_csv(walk_access_alt, here("alternative/data/walk_access_alt.csv"))
+```
+
+
+
 ## Calculating accessibility for bicyclists
 
 ```{r}
@@ -195,6 +201,10 @@ bike_access_alt <- accessibility(existing_core,
                                      cutoffs = 15,
                                      decay_value = 2, 
                                      verbose = FALSE)
+```
+
+```{r}
+write_csv(bike_access_alt, here("alternative/data/bike_access_alt.csv"))
 ```
 
 ## Calculating accessibility for transit
