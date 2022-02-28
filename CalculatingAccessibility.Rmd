@@ -59,6 +59,10 @@ car_access_existing <- accessibility(existing_core,
                                      verbose = FALSE)
 ```
 
+```{r}
+write_csv(car_access_existing, here("existing/data/car_access_existing.csv"))
+```
+
 ## Calculating accessibility for pedestrians
 
 ```{r}
@@ -73,6 +77,10 @@ walk_access_existing <- accessibility(existing_core,
                                      verbose = FALSE)
 ```
 
+```{r}
+write_csv(walk_access_existing, here("existing/data/walk_access_existing.csv"))
+```
+
 ## Calculating accessibility for bicyclists
 
 ```{r}
@@ -85,6 +93,10 @@ bike_access_existing <- accessibility(existing_core,
                                      cutoffs = 15,
                                      decay_value = 2, 
                                      verbose = FALSE)
+```
+
+```{r}
+write_csv(bike_access_existing, here("existing/data/bike_access_existing.csv"))
 ```
 
 ## Calculating accessibility for transit
@@ -102,6 +114,10 @@ transit_access_existing <- accessibility(existing_core,
                                      departure_datetime = 
                                        ymd_hm("2022-02-22 17:00"),
                                      time_window = 120)
+```
+
+```{r}
+write_csv(transit_access_existing, here("existing/data/transit_access_existing.csv"))
 ```
 
 # Setting up Centroid Information for Proposed Conditions
@@ -137,6 +153,7 @@ centroids_jobs_alt <- here("zones",
     st_read() %>%
     left_join(jobs_proposed) 
 
+write_csv(jobs_proposed, here("alternative/data/jobs_proposed.csv"))
 ```
 
 # Setting up r5r
@@ -224,7 +241,9 @@ transit_access_alt <- accessibility(existing_core,
                                      time_window = 120)
 ```
 
-
+```{r}
+write_csv(transit_access_alt, here("alternative/data/transit_access_alt.csv"))
+```
 
 
 ```{r}
