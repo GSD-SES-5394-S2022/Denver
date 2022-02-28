@@ -106,25 +106,119 @@ transit_access_existing <- accessibility(existing_core,
 
 # Setting up Centroid Information for Proposed Conditions
 
+# Recalculating New Total Employment
+
+```{r}
+final_tracts_emp <- final_tracts_sel %>%
+mutate(new_total_emp = 
+         new_basic +
+         new_retail + 
+         new_service)
+
+write_csv(final_tracts_emp, 
+          here("alternative",
+               "data",
+               "final_tracts_emp.csv"))
+```
+
+
 ```{r}
 
-jobs_proposed <- here("existing",
+jobs_proposed <- here("alternative",
              "data",
-             "zone_data.csv") %>%
+             "final_tracts_emp.csv") %>%
     read_csv() %>%
-    select(GEOID, total_emp) %>%
+    select(GEOID, new_total_emp) %>%
     mutate(GEOID = as.character(GEOID)) %>%
     rename(id = GEOID)
 
-centroids_jobs <- here("zones",
+centroids_jobs_alt <- here("zones",
                   "centroids.geojson") %>%
     st_read() %>%
-    left_join(jobs) 
+    left_join(jobs_proposed) 
 
 ```
+
+# Setting up r5r
+
+```{r}
+existing_core <- here("existing",
+                      "networks") %>%
+  setup_r5(verbose = FALSE)
+```
+
+# Calculating accessibility for non-transit modes under proposed conditions
+
+## Calculating accessibility for cars
+
+```{r}
+car_access_alt <- accessibility(existing_core,
+                                     origins = centroids_jobs_alt,
+                                     destinations = centroids_jobs_alt,
+                                     opportunities_colname = 'new_total_emp',
+                                     mode = "CAR",
+                                     decay_function = "logistic",
+                                     cutoffs = 15,
+                                     decay_value = 2, 
+                                     verbose = FALSE)
+```
+
+```{r}
+write_csv(car_access_alt, here("alternative/data/car_access_alt.csv"))
+```
+
+
+
+## Calculating accessibility for pedestrians
+
+```{r}
+walk_access_alt <- accessibility(existing_core,
+                                     origins = centroids_jobs_alt,
+                                     destinations = centroids_jobs_alt,
+                                     opportunities_colname = 'new_total_emp',
+                                     mode = "WALK",
+                                     decay_function = "logistic",
+                                     cutoffs = 15,
+                                     decay_value = 2, 
+                                     verbose = FALSE)
+```
+
+## Calculating accessibility for bicyclists
+
+```{r}
+bike_access_alt <- accessibility(existing_core,
+                                     origins = centroids_jobs_alt,
+                                     destinations = centroids_jobs_alt,
+                                     opportunities_colname = 'new_total_emp',
+                                     mode = "BICYCLE",
+                                     decay_function = "logistic",
+                                     cutoffs = 15,
+                                     decay_value = 2, 
+                                     verbose = FALSE)
+```
+
+## Calculating accessibility for transit
+
+```{r}
+transit_access_alt <- accessibility(existing_core,
+                                     origins = centroids_jobs_alt,
+                                     destinations = centroids_jobs_alt,
+                                     opportunities_colname = 'new_total_emp',
+                                     mode = "TRANSIT",
+                                     decay_function = "logistic",
+                                     cutoffs = 15,
+                                     decay_value = 2, 
+                                     verbose = FALSE,
+                                     departure_datetime = 
+                                       ymd_hm("2022-02-22 17:00"),
+                                     time_window = 120)
+```
+
+
 
 
 ```{r}
 stop_r5()
 ```
+
 
