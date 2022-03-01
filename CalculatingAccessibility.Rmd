@@ -250,4 +250,35 @@ write_csv(transit_access_alt, here("alternative/data/transit_access_alt.csv"))
 stop_r5()
 ```
 
+# Comparing auto and transit accessibility in existing conditions
 
+# Comparing auto and transit accessibility in proposed conditions
+
+First we are reading the saved csv files for Car and Transit accessibility
+
+```{r}
+car_access_alt <- read_csv(here("alternative/data/car_access_alt.csv"))
+transit_access_alt <- read_csv(here("alternative/data/transit_access_alt.csv"))
+```
+
+Then we can calculate the quality of each by calculating a ratio. This is the ratio of transit accessibility to car accessibility. A ratio of 1 or higher means that there are that many more jobs accessible by transit than by car. So a ratio of 2 would mean that a if 50 jobs are accessible by cars, then 100 are accessible by transit. A ratio less than 1 means that there are that many fewer jobs accessible by transit than by car. A ratio of 0.25 would mean that if 100 jobs are accessible by car, then only 25 jobs are accessible by transit. 
+
+
+```{r}
+car_access_alt_comp <- car_access_alt %>%
+  select(from_id, accessibility) %>%
+  rename(GEOID = from_id,
+         car_access = accessibility)
+
+transit_access_alt_comp <- transit_access_alt %>%
+  select(from_id, accessibility) %>%
+  rename(GEOID = from_id,
+         transit_access = accessibility)
+
+access_compare_alt <- left_join(car_access_alt_comp, transit_access_alt_comp) %>%
+  mutate(ratio = transit_access / car_access)
+```
+
+```{r}
+write_csv(access_compare_alt, here("alternative/data/access_compare_alt.csv"))
+```
