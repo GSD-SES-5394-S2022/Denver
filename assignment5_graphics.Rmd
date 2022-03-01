@@ -14,66 +14,106 @@ library(units)
 library(here)
 library(png)
 library(ggthemes)
+library(RColorBrewer)
+library(PNWColors)
 ```
 
 ## Reading in our .csv files
 
 ```{r}
 car_access_existing <- read.csv(here("existing",
-                              "data",
-                              "car_access_existing.csv"))
+                                      "data",
+                                      "car_access_existing.csv"))
+
 
 walk_access_existing <- read.csv(here("existing",
-                              "data",
-                              "walk_access_existing.csv"))
+                                      "data",
+                                      "walk_access_existing.csv"))
 
 bike_access_existing <- read.csv(here("existing",
-                              "data",
-                              "bike_access_existing.csv"))
+                                      "data",
+                                      "bike_access_existing.csv"))
 
 transit_access_existing <- read.csv(here("existing",
-                              "data",
-                              "transit_access_existing.csv"))
+                                      "data",
+                                      "transit_access_existing.csv"))
 
 car_access_alt <- read.csv(here("alternative",
-                              "data",
-                              "car_access_alt.csv"))
+                                      "data",
+                                      "car_access_alt.csv"))
 
 walk_access_alt <- read.csv(here("alternative",
-                              "data",
-                              "walk_access_alt.csv"))
+                                      "data",
+                                      "walk_access_alt.csv"))
 
 bike_access_alt <- read.csv(here("alternative",
-                              "data",
-                              "bike_access_alt.csv"))
+                                      "data",
+                                      "bike_access_alt.csv"))
 
 transit_access_alt <- read.csv(here("alternative",
-                              "data",
-                              "transit_access_alt.csv"))
+                                      "data",
+                                      "transit_access_alt.csv"))
+
+access_compare_existing <- read.csv(here("existing",
+                                      "data",
+                                      "access_compare_existing.csv"))
+
+access_compare_alt <- read.csv(here("alternative",
+                                      "data",
+                                      "access_compare_alt.csv"))
 ```
 
+## Combining all modes of access files
+```{r} 
+# Looked to Austin group for guidance
+
+all_access_existing <- left_join(car_access_existing, bike_access_existing) %>%
+  left_join(walk_access_existing) %>%
+  left_join(transit_access_existing) %>%
+  left_join(access_compare_existing, by = c("from_id" = "GEOID"))
+
+all_access_alt <- left_join(car_access_alt, bike_access_alt) %>%
+  left_join(walk_access_alt) %>%
+  left_join(transit_access_alt) %>%
+  left_join(access_compare_alt, by = c("from_id" = "GEOID"))
+```
+
+## Joining combined modes with spatial data
+```{r}
+zones <- st_read(here("zones", "boundaries1.geojson")) %>%
+  mutate(GEOID =
+           as.numeric(GEOID))
+
+all_access_existing <- left_join(zones, 
+                                 all_access_existing, 
+                                 by = c("GEOID" = "GEOID"))
+  
+all_access_alt <- left_join(zones,
+                            all_access_alt,
+                            by = c("GEOID" = "GEOID"))
+```
+
+```{r}
+car_pal <- pnw_palette(name = "Bay", 
+                           n = 6, 
+                           type = "continuous")
+```
 ## Making Maps
 
 ### Driving Under existing conditions
 
 ```{r}
 
-car_access_existing_map <- ggplot(car_access_existing) +
-  geom_sf(aes(fill = accessibility), color=NA)
-          
-car_access_existing_map +
-  theme_void() +
-  theme(legend.title = element_text(size=10),
-        legend.text=element_text(size=8)) +
-  scale_fill_viridis_c(option = "D",
-                       begin = 1, end = 0,
-                       name = "Driving Accessibility under Existing Conditions",
-                       breaks = size_brks <- seq(0, 40000, by = 10000),
-                       limits = c(1, 40000), 
-                       labels = paste(formatC(size_brks,
-                                              format="f",
-                                              digits=0),
-                                      "Jobs"))
+car_access_alt_map <- ggplot(all_access_alt) +
+  geom_sf(aes(fill = car_access),
+          color = NA) +
+  scale_fill_gradientn(colours = car_pal,
+                       name = "Job Accessibility \nby Driving (Proposed)",
+                       breaks = size_brks <- seq(0, 1000000, by = 200000),
+                       labels = formatC(size_brks, format = "d", big.mark = ",")) +
+  theme_void()
+
+car_access_alt_map
 ```
 ### Walking under existing conditions
 
