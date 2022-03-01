@@ -103,28 +103,115 @@ car_pal <- pnw_palette(name = "Bay",
 ### Driving Under existing conditions
 
 ```{r}
-
-car_access_alt_map <- ggplot(all_access_alt) +
+car_access_existing_map <- ggplot(all_access_existing) +
   geom_sf(aes(fill = car_access),
           color = NA) +
   scale_fill_gradientn(colours = car_pal,
-                       name = "Job Accessibility \nby Driving (Proposed)",
+                       name = "Job Accessibility \nby Driving (Existing)",
                        breaks = size_brks <- seq(0, 1000000, by = 200000),
+                       limits =  c(1,1000000),
                        labels = formatC(size_brks, format = "d", big.mark = ",")) +
   theme_void()
 
-car_access_alt_map
+car_access_existing_map
+
+ggsave("car_access_existing_map.pdf" ,
+         car_access_existing_map)
+      
 ```
 ### Walking under existing conditions
 
 ### Biking under existing conditions
 
 ### Transit under existing conditions
+```{r}
+transit_access_existing_map <- ggplot(all_access_existing) +
+  geom_sf(aes(fill = transit_access),
+          color = NA) +
+  scale_fill_gradientn(colours = car_pal,
+                       name = "Job Accessibility \nby Transit (Existing)",
+                       breaks = size_brks <- seq(0, 11000, by = 2000),
+                       limits =  c(1,11000),
+                       labels = formatC(size_brks, format = "d", big.mark = ",")) +
+  theme_void()
+
+transit_access_existing_map
+
+ggsave("transit_access_existing_map.pdf" ,
+         transit_access_existing_map)
+```
 
 ### Driving Under proposed conditions
+```{r}
+car_access_alt_map <- ggplot(all_access_alt) +
+  geom_sf(aes(fill = car_access),
+          color = NA) +
+  scale_fill_gradientn(colours = car_pal,
+                       name = "Job Accessibility \nby Driving (Proposed)",
+                       breaks = size_brks <- seq(0, 1000000, by = 200000),
+                       limits =  c(1,1000000),
+                       labels = formatC(size_brks, format = "d", big.mark = ",")) +
+  theme_void()
+
+car_access_alt_map
+
+ggsave("car_access_alt_map.pdf" ,
+         car_access_alt_map)
+```
 
 ### Walking under proposed conditions
 
 ### Biking under proposed conditions
 
 ### Transit under proposed conditions
+```{r}
+transit_access_alt_map <- ggplot(all_access_existing) +
+  geom_sf(aes(fill = transit_access),
+          color = NA) +
+  scale_fill_gradientn(colours = car_pal,
+                       name = "Job Accessibility \nby Transit (Proposed)",
+                       breaks = size_brks <- seq(0, 11000, by = 2000),
+                       limits =  c(1,11000),
+                       labels = formatC(size_brks, format = "d", big.mark = ",")) +
+  theme_void()
+
+transit_access_alt_map
+
+ggsave("transit_access_alt_map.pdf" ,
+         transit_access_alt_map)
+```
+
+### Ratio of Access
+```{r}
+ratio_access_existing_map <- ggplot(all_access_existing) +
+  geom_sf(aes(fill = ratio),
+          color = NA) +
+  scale_fill_gradientn(colours = car_pal,
+                       name = "Transit to Car Access Ratio (Existing)",
+                       breaks = size_brks <- seq(0, 1, by = .2),
+                       limits =  c(0,1),
+                       labels = formatC(size_brks, big.mark = ",")) +
+  theme_void()
+
+ratio_access_existing_map
+
+ggsave("ratio_access_existing_map.pdf" ,
+         ratio_access_existing_map)
+```
+
+```{r}
+ratio_access_alt_map <- ggplot(all_access_alt) +
+  geom_sf(aes(fill = ratio),
+          color = NA) +
+  scale_fill_gradientn(colours = car_pal,
+                       name = "Transit to Car Access Ratio (Proposed)",
+                       breaks = size_brks <- seq(0, 1, by = .2),
+                       limits =  c(0,1),
+                       labels = formatC(size_brks, big.mark = ",")) +
+  theme_void()
+
+ratio_access_alt_map
+
+ggsave("ratio_access_alt_map.pdf" ,
+         ratio_access_alt_map)
+```
