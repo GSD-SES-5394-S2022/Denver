@@ -184,8 +184,6 @@ car_access_alt <- accessibility(existing_core,
 write_csv(car_access_alt, here("alternative/data/car_access_alt.csv"))
 ```
 
-
-
 ## Calculating accessibility for pedestrians
 
 ```{r}
@@ -203,8 +201,6 @@ walk_access_alt <- accessibility(existing_core,
 ```{r}
 write_csv(walk_access_alt, here("alternative/data/walk_access_alt.csv"))
 ```
-
-
 
 ## Calculating accessibility for bicyclists
 
@@ -245,12 +241,33 @@ transit_access_alt <- accessibility(existing_core,
 write_csv(transit_access_alt, here("alternative/data/transit_access_alt.csv"))
 ```
 
-
 ```{r}
 stop_r5()
 ```
 
 # Comparing auto and transit accessibility in existing conditions
+```{r}
+car_access_existing <- read_csv(here("existing/data/car_access_existing.csv"))
+transit_access_existing <- read_csv(here("existing/data/transit_access_existing.csv"))
+```
+
+```{r}
+car_access_existing_comp <- car_access_existing %>%
+  select(from_id, accessibility) %>%
+  rename(GEOID = from_id,
+         car_access = accessibility)
+
+transit_access_existing_comp <- transit_access_existing %>%
+  select(from_id, accessibility) %>%
+  rename(GEOID = from_id,
+         transit_access = accessibility)
+
+access_compare_existing <- left_join(car_access_existing_comp, transit_access_existing_comp) %>%
+  mutate(ratio = transit_access / car_access)
+```
+```{r}
+write_csv(access_compare_existing, here("existing/data/access_compare_existing.csv"))
+```
 
 # Comparing auto and transit accessibility in proposed conditions
 

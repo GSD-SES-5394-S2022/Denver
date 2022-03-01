@@ -1,0 +1,90 @@
+---
+title: "assignment5_graphics"
+output: html_document
+---
+## Load Libraries
+
+```{r}
+library(ggplot2)
+library(sf)
+library(tidyverse)
+library(tidycensus)
+library(sp)
+library(units)
+library(here)
+library(png)
+library(ggthemes)
+```
+
+## Reading in our .csv files
+
+```{r}
+car_access_existing <- read.csv(here("existing",
+                              "data",
+                              "car_access_existing.csv"))
+
+walk_access_existing <- read.csv(here("existing",
+                              "data",
+                              "walk_access_existing.csv"))
+
+bike_access_existing <- read.csv(here("existing",
+                              "data",
+                              "bike_access_existing.csv"))
+
+transit_access_existing <- read.csv(here("existing",
+                              "data",
+                              "transit_access_existing.csv"))
+
+car_access_alt <- read.csv(here("alternative",
+                              "data",
+                              "car_access_alt.csv"))
+
+walk_access_alt <- read.csv(here("alternative",
+                              "data",
+                              "walk_access_alt.csv"))
+
+bike_access_alt <- read.csv(here("alternative",
+                              "data",
+                              "bike_access_alt.csv"))
+
+transit_access_alt <- read.csv(here("alternative",
+                              "data",
+                              "transit_access_alt.csv"))
+```
+
+## Making Maps
+
+### Driving Under existing conditions
+
+```{r}
+
+car_access_existing_map <- ggplot(car_access_existing) +
+  geom_sf(aes(fill = accessibility), color=NA)
+          
+car_access_existing_map +
+  theme_void() +
+  theme(legend.title = element_text(size=10),
+        legend.text=element_text(size=8)) +
+  scale_fill_viridis_c(option = "D",
+                       begin = 1, end = 0,
+                       name = "Driving Accessibility under Existing Conditions",
+                       breaks = size_brks <- seq(0, 40000, by = 10000),
+                       limits = c(1, 40000), 
+                       labels = paste(formatC(size_brks,
+                                              format="f",
+                                              digits=0),
+                                      "Jobs"))
+```
+### Walking under existing conditions
+
+### Biking under existing conditions
+
+### Transit under existing conditions
+
+### Driving Under proposed conditions
+
+### Walking under proposed conditions
+
+### Biking under proposed conditions
+
+### Transit under proposed conditions
