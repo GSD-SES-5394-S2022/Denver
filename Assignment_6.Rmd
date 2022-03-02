@@ -36,4 +36,46 @@ model_data <- left_join(zones, access) %>%
   select(GEOID, pct_smol_hh, pct_lo_inc, pct_hi_inc, ratio, pct_no_veh)
 ```
 
+# Visualizing model variables
 
+## No-Car Households vs. Low-income Households
+
+```{r}
+ggplot(model_data, aes(x = pct_lo_inc, y = pct_no_veh)) +
+  geom_point(size = 1, color = "blue") +
+  geom_smooth(size = 0.5, lty = "dashed", color = "blue", method = "lm")
+```
+
+## Distribution of Low-Income Households
+
+```{r}
+pct_lo_inc_dist <- ggplot(model_data) +
+  geom_histogram(aes(x = pct_lo_inc))
+
+pct_lo_inc_dist
+```
+
+## No-Car Households vs. High-Income Households
+
+```{r}
+ggplot(model_data, aes(x = pct_hi_inc, y = pct_no_veh)) +
+  geom_point(size = 1, color = "red") +
+  geom_smooth(size = 0.5, lty = "dashed", color = "red", method = "lm")
+```
+
+## No-Car Households vs. 1 to 2 person Households
+
+```{r}
+ggplot(model_data, aes(x = pct_smol_hh, y = pct_no_veh)) +
+  geom_point(size = 1, color = "green") +
+  geom_smooth(size = 0.5, lty = "dashed", color = "green", method = "lm")
+```
+
+## No-Car Households vs. Transit to Car Accessibility Ratio
+
+```{r}
+ggplot(model_data, aes(x = ratio, y = pct_no_veh)) +
+  geom_point(size = 1, color = "black") +
+  xlim(0,1) +
+  geom_smooth(size = 0.5, lty = "dashed", color = "black", method = "lm")
+```
