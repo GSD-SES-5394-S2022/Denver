@@ -1,0 +1,39 @@
+---
+title: "Assignment_6"
+author: "Miguel Perez Luna"
+date: "3/2/2022"
+output: html_document
+---
+
+```{r}
+library(here)
+library(tidyverse)
+library(sf)
+library(modelr)
+library(jtools)
+```
+
+# Loading in data
+
+We are loading our accessibility data for our existing conditions and our zone data. 
+
+```{r}
+access <- here("existing/data/access_compare_existing.csv") %>%
+  read_csv()
+
+zones <- here("existing/data/zone_data.csv") %>%
+  read_csv()
+```
+
+# Selecting Variables
+
+```{r}
+model_data <- left_join(zones, access) %>%
+  mutate(pct_smol_hh = (oneperson_hh + twoperson_hh) / housing_units,
+         pct_lo_inc = hh_income_low / hh_total,
+         pct_hi_inc = hh_income_high / hh_total,
+         pct_no_veh = nocar / housing_units) %>%
+  select(GEOID, pct_smol_hh, pct_lo_inc, pct_hi_inc, ratio, pct_no_veh)
+```
+
+
