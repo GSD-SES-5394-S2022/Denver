@@ -36,6 +36,12 @@ model_data <- left_join(zones, access) %>%
   select(GEOID, pct_smol_hh, pct_lo_inc, pct_hi_inc, ratio, pct_no_veh)
 ```
 
+```{r}
+model_data[is.na(model_data) | model_data == "Inf"] <- NA
+
+model_data <- na.omit(model_data) 
+```
+
 # Visualizing model variables
 
 ## No-Car Households vs. Low-income Households
@@ -78,4 +84,20 @@ ggplot(model_data, aes(x = ratio, y = pct_no_veh)) +
   geom_point(size = 1, color = "black") +
   xlim(0,1) +
   geom_smooth(size = 0.5, lty = "dashed", color = "black", method = "lm")
+```
+
+# Estimating the regression model
+
+```{r}
+model1 <- lm(pct_no_veh ~ pct_smol_hh + pct_lo_inc + pct_hi_inc + ratio, data = model_data)
+
+export_summs(model1)
+```
+
+## We are making a more parsimonious model.
+
+```{r}
+model2 <- lm(pct_no_veh ~ pct_smol_hh + pct_lo_inc, data = model_data)
+
+export_summs(model2)
 ```
