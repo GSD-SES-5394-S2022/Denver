@@ -101,3 +101,40 @@ model2 <- lm(pct_no_veh ~ pct_smol_hh + pct_lo_inc, data = model_data)
 
 export_summs(model2)
 ```
+
+# Applying our model
+
+Here we are reading in our alternative conditions zone data.
+
+```{r}
+alt_zone_data <- here("alternative",
+                    "data",
+                    "final_tracts_emp.csv") %>%
+                read_csv() %>%
+  mutate(new_total_hh = new_hh_income_low + new_hh_income_mid + new_hh_income_high)
+```
+
+Conundrum: We are not sure if we should be using our existing conditions accessibility ("access") in the left_join() function below. We are also not sure if we should be calling existing or proposed variables into the mutate() function. 
+
+
+```{r}
+alt_access <- here("alternative",
+               "data",
+               "access_compare_alt.csv") %>%
+  read_csv()
+
+alt_zones <- here("alternative",
+                    "data",
+                    "final_tracts_emp.csv") %>%
+                read_csv() %>%
+  mutate(new_total_hh = new_hh_income_low + new_hh_income_mid + new_hh_income_high) %>%
+  left_join(alt_access) %>%
+  mutate(pct_smol_hh = (new_oneperson_hh + new_twoperson_hh) / new_total_housing_units,
+         pct_lo_inc = new_hh_income_low / new_total_hh,
+         pct_hi_inc = new_hh_income_high / new_total_hh,
+         pct_no_veh = new_nocar / new_total_housing_units) %>%
+  add_predictions(model = model2) %>%
+  mutate(new_pct_no_veh = pred) %>%
+  mutate(new_nocar = round(new_total_housing_units * new_pct_no_veh)) 
+```
+
