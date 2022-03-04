@@ -47,43 +47,87 @@ model_data <- na.omit(model_data)
 ## No-Car Households vs. Low-income Households
 
 ```{r}
-ggplot(model_data, aes(x = pct_lo_inc, y = pct_no_veh)) +
+no_car_low_inc <- ggplot(model_data, aes(x = pct_lo_inc, y = pct_no_veh)) +
   geom_point(size = 1, color = "blue") +
-  geom_smooth(size = 0.5, lty = "dashed", color = "blue", method = "lm")
+  geom_smooth(size = 0.5, lty = "dashed", color = "blue", method = "lm") +
+  theme_bw()
+
+no_car_low_inc + scale_x_continuous(name = "Low Income Households", 
+                                    labels = scales::percent) +
+                scale_y_continuous(name = "Zero Vehicle Households",
+                                   labels = scales::percent)
+
+ggsave("no_car_low_inc.pdf",
+       no_car_low_inc)
+
 ```
 
 ## Distribution of Low-Income Households
 
 ```{r}
 pct_lo_inc_dist <- ggplot(model_data) +
-  geom_histogram(aes(x = pct_lo_inc))
+  geom_histogram(aes(x = pct_lo_inc)) +
+  theme_bw()
 
-pct_lo_inc_dist
+pct_lo_inc_dist + scale_y_continuous(name = "Number of Census Tracts") +
+                scale_x_continuous(name = "Low Income Households",
+                                   labels = scales::percent)
+
+ggsave("pct_lo_inc_dist.pdf",
+       pct_lo_inc_dist)
+
 ```
 
 ## No-Car Households vs. High-Income Households
 
 ```{r}
-ggplot(model_data, aes(x = pct_hi_inc, y = pct_no_veh)) +
+no_car_hi_inc <- ggplot(model_data, aes(x = pct_hi_inc, y = pct_no_veh)) +
   geom_point(size = 1, color = "red") +
-  geom_smooth(size = 0.5, lty = "dashed", color = "red", method = "lm")
+  geom_smooth(size = 0.5, lty = "dashed", color = "red", method = "lm") +
+  theme_bw()
+
+no_car_hi_inc + scale_x_continuous(name = "High Income Households", 
+                                    labels = scales::percent) +
+                scale_y_continuous(name = "Zero Vehicle Households",
+                                   labels = scales::percent) 
+
+ggsave("no_car_hi_inc.pdf",
+       no_car_hi_inc)
 ```
 
 ## No-Car Households vs. 1 to 2 person Households
 
 ```{r}
-ggplot(model_data, aes(x = pct_smol_hh, y = pct_no_veh)) +
-  geom_point(size = 1, color = "green") +
-  geom_smooth(size = 0.5, lty = "dashed", color = "green", method = "lm")
+no_car_sm_hh <- ggplot(model_data, aes(x = pct_smol_hh, y = pct_no_veh)) +
+  geom_point(size = 1, color = "cadetblue4") +
+  geom_smooth(size = 0.5, lty = "dashed", color = "cadetblue4", method = "lm") +
+  theme_bw()
+
+no_car_sm_hh + scale_x_continuous(name = "Small Households", 
+                                    labels = scales::percent) +
+                scale_y_continuous(name = "Zero Vehicle Households",
+                                   labels = scales::percent) 
+
+ggsave("no_car_sm_hh.pdf",
+       no_car_sm_hh)
 ```
 
 ## No-Car Households vs. Transit to Car Accessibility Ratio
 
 ```{r}
-ggplot(model_data, aes(x = ratio, y = pct_no_veh)) +
-  geom_point(size = 1, color = "black") +
+no_car_ratio <- ggplot(model_data, aes(x = ratio, y = pct_no_veh)) +
+  geom_point(size = 1, color = "sienna2") +
   xlim(0,1) +
-  geom_smooth(size = 0.5, lty = "dashed", color = "black", method = "lm")
+  geom_smooth(size = 0.5, lty = "dashed", color = "sienna2", method = "lm") +
+  theme_bw()
+
+
+no_car_ratio  + scale_x_continuous(name = "Transit-Car Accessibility") + xlim(0,1) +
+                scale_y_continuous(name = "Zero Vehicle Households",
+                                   labels = scales::percent) 
+
+ggsave("no_car_ratio.pdf",
+       no_car_ratio)
 ```
 
 # Estimating the regression model
@@ -137,4 +181,50 @@ alt_zones <- here("alternative",
   mutate(new_pct_no_veh = pred) %>%
   mutate(new_nocar = round(new_total_housing_units * new_pct_no_veh)) 
 ```
+
+## Choropleth map of predicted no-car households
+
+```{r}
+zones_pred <- here("zones",
+                   "boundaries1.geojson") %>%
+  st_read()
+
+
+#left join zones and alt_zones
+
+pred_geom <- left_join(zones_pred, alt_zones)
+```
+
+
+```{r}
+library(ggthemes)
+library(RColorBrewer)
+library(PNWColors)
+```
+
+```{r}
+no_car_pal <- pnw_palette(name = "Bay", 
+                           n = 6, 
+                           type = "continuous")
+```
+
+```{r}
+pred_no_car <- ggplot(pred_geom) +
+  geom_sf(aes(fill = pred), color=NA) +
+   scale_fill_gradientn(colours = no_car_pal,
+                       name = "Predicted Zero-Car Households",
+                       breaks = size_brks <- seq(0, .4, by = .1),
+                       limits =  c(0,.4),
+                       labels = formatC(size_brks, big.mark = ",")) +
+  theme_void()
+
+pred_no_car
+
+ggsave("pred_no_car.pdf" ,
+         pred_no_car)
+```
+
+
+
+
 
