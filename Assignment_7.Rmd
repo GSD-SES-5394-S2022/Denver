@@ -1,0 +1,76 @@
+---
+title: "Assignment_7"
+author: "Arnav Murulidhar"
+date: "3/9/2022"
+output: html_document
+---
+
+```{r}
+library(here)
+library(tidyverse)
+library(survey)
+library(srvyr)
+library(naniar)
+library(jtools)
+library(knitr)
+```
+#Loading NHTS data
+
+```{r}
+hhs <- here("large_files/csv/hhpub.csv") %>%
+  read_csv()
+
+trips <- here("large_files/csv/trippub.csv") %>%
+  read_csv()
+```
+
+#Collecting relevant household level data 
+
+```{r}
+denver_hhs <- hhs %>%
+  filter(HH_CBSA == "19740") %>%
+  mutate(inc_levels_ = case_when(HHFAMINC == "01" ~ "low",
+                               HHFAMINC == "02" ~ "low",
+                               HHFAMINC == "03" ~ "low",
+                               HHFAMINC == "04" ~ "mid",
+                               HHFAMINC == "05" ~ "mid",
+                               HHFAMINC == "06" ~ "mid",
+                               HHFAMINC == "07" ~ "mid",
+                               HHFAMINC == "08" ~ "high",
+                               HHFAMINC == "09" ~ "high",
+                               HHFAMINC == "10" ~ "high",
+                               HHFAMINC == "11" ~ "high",
+                               TRUE ~ "NA")) %>%
+  mutate(size_ = case_when(HHSIZE == 1 ~ "one",
+                              HHSIZE == 2 ~ "two",
+                              TRUE ~ "NA")) %>%
+  mutate(zero_veh_ = (HHVEHCNT == 0)) %>%
+  replace_with_na(list(inc_levels_ = "NA")) %>%
+  replace_with_na(list(size_ = "NA")) %>%
+  select(HOUSEID, zero_veh_, size_, inc_levels_, WTHHFIN) 
+```
+
+#Collecting relevant trip level data
+
+```{r}
+trips_by_purpose <- trips %>% 
+  filter(HH_CBSA == "19740") %>%
+  select(HOUSEID, WHYFROM, WHYTO) %>%
+  mutate(home_based = case_when(WHYTO == "01" ~ TRUE,
+                                WHYTO == "02" ~ TRUE,
+                                WHYFROM == "01" ~ TRUE,
+                                WHYFROM == "02" ~ TRUE,
+                                TRUE ~ FALSE)) %>%
+  mutate(work = ifelse(WHYTO == "03" | WHYFROM == "03", TRUE, FALSE)) %>%
+  mutate(purpose = case_when(home_based & work ~ "HBW",
+                            home_based ~ "HBO",
+                            TRUE ~ "NHB")) %>%
+  group_by(HOUSEID, purpose) %>%
+  summarize(n = n()) %>%
+  pivot_wider(names_from = "purpose", values_from = "n") 
+```
+
+
+
+
+
