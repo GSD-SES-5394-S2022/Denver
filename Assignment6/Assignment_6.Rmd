@@ -59,7 +59,10 @@ no_car_low_inc + scale_x_continuous(name = "Low Income Households",
                                    labels = scales::percent)
 
 ggsave("no_car_low_inc.pdf",
-       no_car_low_inc)
+       no_car_low_inc + scale_x_continuous(name = "Low Income Households", 
+                                    labels = scales::percent) +
+                scale_y_continuous(name = "Zero Vehicle Households",
+                                   labels = scales::percent))
 
 ```
 
@@ -75,7 +78,9 @@ pct_lo_inc_dist + scale_y_continuous(name = "Number of Census Tracts") +
                                    labels = scales::percent)
 
 ggsave("pct_lo_inc_dist.pdf",
-       pct_lo_inc_dist)
+       pct_lo_inc_dist + scale_y_continuous(name = "Number of Census Tracts") +
+                scale_x_continuous(name = "Low Income Households",
+                                   labels = scales::percent))
 
 ```
 
@@ -93,7 +98,10 @@ no_car_hi_inc + scale_x_continuous(name = "High Income Households",
                                    labels = scales::percent) 
 
 ggsave("no_car_hi_inc.pdf",
-       no_car_hi_inc)
+       no_car_hi_inc + scale_x_continuous(name = "High Income Households", 
+                                    labels = scales::percent) +
+                scale_y_continuous(name = "Zero Vehicle Households",
+                                   labels = scales::percent) )
 ```
 
 ## No-Car Households vs. 1 to 2 person Households
@@ -110,7 +118,10 @@ no_car_sm_hh + scale_x_continuous(name = "Small Households",
                                    labels = scales::percent) 
 
 ggsave("no_car_sm_hh.pdf",
-       no_car_sm_hh)
+       no_car_sm_hh + scale_x_continuous(name = "Small Households", 
+                                    labels = scales::percent) +
+                scale_y_continuous(name = "Zero Vehicle Households",
+                                   labels = scales::percent))
 ```
 
 ## No-Car Households vs. Transit to Car Accessibility Ratio
@@ -128,7 +139,9 @@ no_car_ratio  + scale_x_continuous(name = "Transit-Car Accessibility") + xlim(0,
                                    labels = scales::percent) 
 
 ggsave("no_car_ratio.pdf",
-       no_car_ratio)
+       no_car_ratio  + scale_x_continuous(name = "Transit-Car Accessibility") + xlim(0,1) +
+                scale_y_continuous(name = "Zero Vehicle Households",
+                                   labels = scales::percent))
 ```
 
 # Estimating the regression model
