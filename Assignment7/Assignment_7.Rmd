@@ -259,3 +259,18 @@ ggsave("nhb_map.pdf" ,
          nhb_map)
 ```
 
+```{r}
+hbo_attr_map <- ggplot(trip_geom) +
+  geom_sf(aes(fill = hbo_attr_bal), color=NA) +
+   scale_fill_gradientn(colours = trip_pal,
+                       name = "Home based other trip attractions",
+                       breaks = size_brks <- seq(0, 12000, by = 3000),
+                       limits =  c(0,12000)) +
+  theme_void()
+
+hbo_attr_map
+
+ggsave("hbo_attr_map.pdf" ,
+         hbo_attr_map)
+```
+
