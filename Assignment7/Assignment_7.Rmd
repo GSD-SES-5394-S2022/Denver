@@ -13,6 +13,10 @@ library(srvyr)
 library(naniar)
 library(jtools)
 library(knitr)
+library(sf)
+library(ggthemes)
+library(RColorBrewer)
+library(PNWColors)
 ```
 #Loading NHTS data
 
@@ -69,8 +73,189 @@ trips_by_purpose <- trips %>%
   summarize(n = n()) %>%
   pivot_wider(names_from = "purpose", values_from = "n") 
 ```
+#Joining trip to household data
+```{r}
+hh_trips <- left_join(denver_hhs, trips_by_purpose) %>%
+  replace_na(list(HBW = 0,
+                  HBO = 0,
+                  NHB = 0))
+```
+#Creating a survey object
+```{r}
+svy_trips <- hh_trips %>%
+  as_survey(weights = WTHHFIN)
+```
+
+#Estimate a household-level regression model for HBO trips
+```{r}
+HBO_model1 <- svyglm(HBO ~ zero_veh_ + size_ + inc_levels_, svy_trips)
+
+export_summs(HBO_model1, 
+             error_pos = "right", 
+             error_format = "(p = {p.value})",
+             model.names = "Full model")
+```
+#Estimating with only household size for HBO trips
+```{r}
+HBO_model2 <- svyglm(HBO ~ size_, svy_trips)
+
+export_summs(HBO_model1, HBO_model2,
+             error_pos = "right", 
+             error_format = "(p = {p.value})",
+             model.names = c("Full model", "Reduced model"))
+```
+
+#Estimate a household-level regression model for HBW trips
+```{r}
+HBW_model1 <- svyglm(HBW ~ zero_veh_ + size_ + inc_levels_, svy_trips)
+
+export_summs(HBW_model1, 
+             error_pos = "right", 
+             error_format = "(p = {p.value})",
+             model.names = "Full model")
+```
+#Estimating with only household size for HBW trips
+```{r}
+HBW_model2 <- svyglm(HBW ~ inc_levels_, svy_trips)
+
+export_summs(HBW_model1, HBW_model2,
+             error_pos = "right", 
+             error_format = "(p = {p.value})",
+             model.names = c("Full model", "Reduced model"))
+```
+#Estimate a household-level regression model for NHB trips
+```{r}
+NHB_model1 <- svyglm(NHB ~ zero_veh_ + size_ + inc_levels_, svy_trips)
+
+export_summs(NHB_model1, 
+             error_pos = "right", 
+             error_format = "(p = {p.value})",
+             model.names = "Full model")
+```
+#Estimating with only household size for NHB trips
+```{r}
+NHB_model2 <- svyglm(NHB ~ inc_levels_, svy_trips)
+
+export_summs(NHB_model1, NHB_model2,
+             error_pos = "right", 
+             error_format = "(p = {p.value})",
+             model.names = c("Full model", "Reduced model"))
+```
+#Applying trip production model to zonal data
+```{r}
+existing_zones <- here("existing",
+                       "data",
+                       "zone_data.csv") %>%
+  read_csv() %>%
+  mutate(hbo_prod = hh_total * HBO_model2$coefficients["(Intercept)"] +
+                    twoperson_hh * HBO_model2$coefficients["size_two"],
+         hbw_prod = hh_total * HBW_model1$coefficients["(Intercept)"] +
+                    hh_income_low * HBW_model1$coefficients["inc_levels_low"],
+         nhb_prod = hh_total * NHB_model1$coefficients["(Intercept)"] +
+                    hh_income_low * NHB_model1$coefficients["inc_levels_low"])
+```
+#Applying trip attractions
+```{r}
+existing_zones <- existing_zones %>%
+  replace_na(list(basic_emp = 0,
+                  retail_emp = 0, 
+                  service_emp = 0)) %>%
+  mutate(hbo_attr = 0.7 * hh_total +
+                    0.7 * basic_emp +
+                    8.4 * retail_emp +
+                    3.5 * service_emp)
+```
+
+#Comparing productions and attractions
+```{r}
+trip_end_summary <- tibble(Purpose = c("HBO"),
+                           Productions = c(sum(existing_zones$hbo_prod)),
+                           Attractions = c(sum(existing_zones$hbo_attr)),
+                           Difference = c(sum(existing_zones$hbo_attr) - 
+                                            sum(existing_zones$hbo_prod)))
+
+kable(trip_end_summary, format.args = list(big.mark = ","))
+```
+
+#Balancing productions and attractions
+```{r}
+existing_zones <- existing_zones %>%
+  mutate(hbo_attr_bal = hbo_attr * 
+           sum(existing_zones$hbo_prod) / sum(existing_zones$hbo_attr))
+```
+
+#Comparing productions and attractions
+```{r}
+trip_end_summary <- tibble(Purpose = c("HBO"),
+                           Productions = c(sum(existing_zones$hbo_prod)),
+                           Attractions = c(sum(existing_zones$hbo_attr_bal)),
+                           Difference = c(sum(existing_zones$hbo_attr_bal) - 
+                                            sum(existing_zones$hbo_prod)))
+
+kable(trip_end_summary, format.args = list(big.mark = ","))
+```
+#Creating a choropleth map
+```{r}
+existing_zones_select <- existing_zones %>% 
+  select("GEOID", "hbo_prod", "hbw_prod", "nhb_prod", "hbo_attr_bal")
+
+zones_pred <- here("zones",
+                   "boundaries1.geojson") %>%
+  st_read()
 
 
+#left join zones and alt_zones
 
+trip_geom <- left_join(zones_pred, existing_zones_select)
+```
 
+```{r}
+trip_pal <- pnw_palette(name = "Bay", 
+                           n = 6, 
+                           type = "continuous")
+```
+
+```{r}
+hbo_map <- ggplot(trip_geom) +
+  geom_sf(aes(fill = hbo_prod), color=NA) +
+   scale_fill_gradientn(colours = trip_pal,
+                       name = "Tract home based other trips",
+                       breaks = size_brks <- seq(0, 19000, by = 5000),
+                       limits =  c(0,19000)) +
+  theme_void()
+
+hbo_map
+
+ggsave("hbo_map.pdf" ,
+         hbo_map)
+```
+```{r}
+hbw_map <- ggplot(trip_geom) +
+  geom_sf(aes(fill = hbw_prod), color=NA) +
+   scale_fill_gradientn(colours = trip_pal,
+                       name = "Tract home based work trips",
+                       breaks = size_brks <- seq(0, 8000, by = 2000),
+                       limits =  c(0,8000)) +
+  theme_void()
+
+hbw_map
+
+ggsave("hbw_map.pdf" ,
+         hbw_map)
+```
+
+```{r}
+nhb_map <- ggplot(trip_geom) +
+  geom_sf(aes(fill = nhb_prod), color=NA) +
+   scale_fill_gradientn(colours = trip_pal,
+                       name = "Tract non-home based trips",
+                       breaks = size_brks <- seq(0, 12000, by = 3000),
+                       limits =  c(0,12000)) +
+  theme_void()
+
+nhb_map
+
+ggsave("nhb_map.pdf" ,
+         nhb_map)
+```
 
