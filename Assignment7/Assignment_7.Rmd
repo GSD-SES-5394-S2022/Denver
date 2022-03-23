@@ -182,6 +182,8 @@ kable(trip_end_summary, format.args = list(big.mark = ","))
 existing_zones <- existing_zones %>%
   mutate(hbo_attr_bal = hbo_attr * 
            sum(existing_zones$hbo_prod) / sum(existing_zones$hbo_attr))
+
+write.csv(existing_zones, here("Assignment7/existing_zones.csv"))
 ```
 
 #Comparing productions and attractions
