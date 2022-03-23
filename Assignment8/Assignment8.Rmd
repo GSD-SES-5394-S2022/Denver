@@ -1,0 +1,126 @@
+---
+title: "Assignment8"
+output: ''
+date: '2022-03-23'
+---
+#Loading Libraries
+```{r}
+library(here)
+library(tidyverse)
+library(devtools)
+library(survey)
+library(srvyr)
+library(od)
+library(scenRios)
+library(sf)
+```
+#Load trip generation data and skims
+```{r}
+zones <- here("Assignment7",
+              "existing_zones.csv") %>%
+  read_csv(show_col_types = FALSE)
+
+skims <- here("existing",
+              "data",
+              "skims.csv") %>%
+  read_csv(show_col_types = FALSE)
+```
+
+#Calculate average travel time by trip purpose
+```{r}
+temp <- tempfile()
+download.file("https://nhts.ornl.gov/assets/2016/download/csv.zip", temp)
+
+trips <- read_csv(unz(temp, "trippub.csv"), 
+                      show_col_types = FALSE) %>%
+  filter(HH_CBSA == "15380")
+
+unlink(temp)
+```
+##Trip Purpose Variable Creation
+```{r}
+trips <- trips %>%
+  mutate(home_based = case_when(WHYTO == "01" ~ TRUE,
+                                WHYTO == "02" ~ TRUE,
+                                WHYFROM == "01" ~ TRUE,
+                                WHYFROM == "02" ~ TRUE,
+                                TRUE ~ FALSE)) %>%
+  mutate(work = ifelse(WHYTO == "03" | WHYFROM == "03", TRUE, FALSE)) %>%
+  mutate(purpose = case_when(home_based & work ~ "HBW",
+                            home_based ~ "HBO",
+                            TRUE ~ "NHB"))
+```
+##Survey Object and Average Travel Time
+```{r}
+trips_svy <- trips %>%
+  as_survey(weights = WTTRDFIN)
+
+ttime_by_purpose <- trips_svy %>%
+  group_by(purpose) %>%
+  summarise(avg_time = survey_mean(TRVLCMIN))
+
+ttime_by_purpose
+```
+
+#Calculating minumum travel time across all modes
+```{r}
+skims <- skims %>%
+  mutate(min_time = pmin(transit_time, 
+                         car_time,
+                         bicycle_time,
+                         walk_time,
+                         na.rm = TRUE))
+
+skims <- na.omit(skims)
+zones <- na.omit(zones)
+```
+
+#Calculating Friction Factors
+```{r}
+skims <- skims %>%
+  mutate(F_HBW = min_time^-0.503*exp(-0.078*min_time),
+         F_HBO = min_time^-3.993*exp(-0.019*min_time),
+         F_NHB = min_time^-3.345*exp(-0.003*min_time)) 
+```
+
+#HBW Travel Flows
+```{r}
+HBW_dist <- grvty_balancing(od_zones = zones,
+                            friction = skims,
+                            zone_id = "GEOID",
+                            zone_o = "hbw_prod",
+                            zone_d = "hbw_attr_bal",
+                            friction_o_id = "fromId",
+                            friction_d_id = "toId",
+                            friction_factor = "F_HBW",
+                            tolerance = 5,
+                            max_iter = 50000)
+```
+
+#NHB Travel Flows
+```{r}
+NHB_dist <- grvty_balancing(od_zones = zones,
+                            friction = skims,
+                            zone_id = "GEOID",
+                            zone_o = "nhb_prod",
+                            zone_d = "nhb_attr_bal",
+                            friction_o_id = "fromId",
+                            friction_d_id = "toId",
+                            friction_factor = "F_NHB",
+                            tolerance = 5,
+                            max_iter = 50000)
+```
+
+#HBO Travel Flows
+```{r}
+HBO_dist <- grvty_balancing(od_zones = zones,
+                            friction = skims,
+                            zone_id = "GEOID",
+                            zone_o = "hbo_prod",
+                            zone_d = "hbo_attr_bal",
+                            friction_o_id = "fromId",
+                            friction_d_id = "toId",
+                            friction_factor = "F_HBO",
+                            tolerance = 5,
+                            max_iter = 50000)
+```
