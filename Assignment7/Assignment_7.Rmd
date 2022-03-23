@@ -167,7 +167,7 @@ existing_zones <- existing_zones %>%
   mutate(hbw_attr = 1.2 * (basic_emp + 
                              retail_emp + 
                              service_emp)) %>%
-  mutate(nhb_attr = 0.6 * total_hhsE +
+  mutate(nhb_attr = 0.6 * hh_total +
                     0.5 * basic_emp +
                     4.7 * retail_emp +
                     1.4 * service_emp)
@@ -222,6 +222,22 @@ trip_end_summary <- tibble(Purpose = c("HBO"),
                            Attractions = c(sum(existing_zones$hbo_attr_bal)),
                            Difference = c(sum(existing_zones$hbo_attr_bal) - 
                                             sum(existing_zones$hbo_prod)))
+
+kable(trip_end_summary, format.args = list(big.mark = ","))
+
+trip_end_summary <- tibble(Purpose = c("HBW"),
+                           Productions = c(sum(existing_zones$hbw_prod)),
+                           Attractions = c(sum(existing_zones$hbw_attr_bal)),
+                           Difference = c(sum(existing_zones$hbw_attr_bal) - 
+                                            sum(existing_zones$hbw_prod)))
+
+kable(trip_end_summary, format.args = list(big.mark = ","))
+
+trip_end_summary <- tibble(Purpose = c("NHB"),
+                           Productions = c(sum(existing_zones$nhb_prod)),
+                           Attractions = c(sum(existing_zones$nhb_attr_bal)),
+                           Difference = c(sum(existing_zones$nhb_attr_bal) - 
+                                            sum(existing_zones$nhb_prod)))
 
 kable(trip_end_summary, format.args = list(big.mark = ","))
 ```
