@@ -33,6 +33,7 @@ download.file("https://nhts.ornl.gov/assets/2016/download/csv.zip", temp)
 
 trips <- read_csv(unz(temp, "trippub.csv"), 
                       show_col_types = FALSE) %>%
+  # 15380 is the GEOID for Buffalo - should be 19740 for Denver
   filter(HH_CBSA == "15380")
 
 unlink(temp)
@@ -71,8 +72,11 @@ skims <- skims %>%
                          walk_time,
                          na.rm = TRUE))
 
-skims <- na.omit(skims)
-zones <- na.omit(zones)
+# Don't do this - it deletes a lot of rows from your skim
+#  This makes it so you only have one zone that's reachable 
+#  from GEOID 08001008537
+#skims <- na.omit(skims)
+#zones <- na.omit(zones)
 ```
 
 #Calculating Friction Factors
@@ -94,7 +98,7 @@ HBW_dist <- grvty_balancing(od_zones = zones,
                             friction_d_id = "toId",
                             friction_factor = "F_HBW",
                             tolerance = 5,
-                            max_iter = 50000)
+                            max_iter = 100000)
 ```
 
 #NHB Travel Flows

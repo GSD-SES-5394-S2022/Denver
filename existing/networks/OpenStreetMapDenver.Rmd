@@ -75,6 +75,7 @@ car_skim <- travel_time_matrix(alternative_core,
                                origins = centroids,
                                destinations = centroids,
                                mode = "CAR", 
+                               max_trip_duration = 480,
                                verbose = FALSE)
 ```
 
@@ -103,7 +104,8 @@ walk_skim <- travel_time_matrix(alternative_core,
 bicycle_skim <- travel_time_matrix(alternative_core,
                                origins = centroids,
                                destinations = centroids,
-                               mode = "BICYCLE")
+                               mode = "BICYCLE",
+                               verbose = FALSE)
 ```
 
 ## Transit Skims
