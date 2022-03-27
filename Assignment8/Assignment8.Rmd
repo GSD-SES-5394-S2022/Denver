@@ -14,6 +14,10 @@ library(od)
 library(scenRios)
 library(sf)
 ```
+
+```{r}
+install_github("https://github.com/c-voulgaris/scenRios")
+```
 #Load trip generation data and skims
 ```{r}
 zones <- here("Assignment7",
@@ -71,12 +75,6 @@ skims <- skims %>%
                          bicycle_time,
                          walk_time,
                          na.rm = TRUE))
-
-# Don't do this - it deletes a lot of rows from your skim
-#  This makes it so you only have one zone that's reachable 
-#  from GEOID 08001008537
-#skims <- na.omit(skims)
-#zones <- na.omit(zones)
 ```
 
 #Calculating Friction Factors
@@ -97,10 +95,22 @@ HBW_dist <- grvty_balancing(od_zones = zones,
                             friction_o_id = "fromId",
                             friction_d_id = "toId",
                             friction_factor = "F_HBW",
-                            tolerance = 5,
+                            tolerance = 50,
                             max_iter = 100000)
 ```
 
+```{r}
+tail(NHB_dist$convergence)
+```
+```{r}
+head(HBO_dist$flows)
+table(HBO_dist$flows$flow > 0)
+
+```
+```{r}
+save(HBO_dist, file = here("Assignment8",
+                         "HBO_dist"))
+```
 #NHB Travel Flows
 ```{r}
 NHB_dist <- grvty_balancing(od_zones = zones,
@@ -112,8 +122,9 @@ NHB_dist <- grvty_balancing(od_zones = zones,
                             friction_d_id = "toId",
                             friction_factor = "F_NHB",
                             tolerance = 5,
-                            max_iter = 50000)
+                            max_iter = 100000)
 ```
+
 
 #HBO Travel Flows
 ```{r}
@@ -126,5 +137,5 @@ HBO_dist <- grvty_balancing(od_zones = zones,
                             friction_d_id = "toId",
                             friction_factor = "F_HBO",
                             tolerance = 5,
-                            max_iter = 50000)
+                            max_iter = 100000)
 ```
