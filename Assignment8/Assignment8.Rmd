@@ -13,6 +13,8 @@ library(srvyr)
 library(od)
 library(scenRios)
 library(sf)
+library(ggplot2)
+library(ggspatial)
 ```
 
 ```{r}
@@ -95,21 +97,8 @@ HBW_dist <- grvty_balancing(od_zones = zones,
                             friction_o_id = "fromId",
                             friction_d_id = "toId",
                             friction_factor = "F_HBW",
-                            tolerance = 50,
+                            tolerance = 5,
                             max_iter = 100000)
-```
-
-```{r}
-tail(NHB_dist$convergence)
-```
-```{r}
-head(HBO_dist$flows)
-table(HBO_dist$flows$flow > 0)
-
-```
-```{r}
-save(HBO_dist, file = here("Assignment8",
-                         "HBO_dist"))
 ```
 #NHB Travel Flows
 ```{r}
@@ -125,7 +114,6 @@ NHB_dist <- grvty_balancing(od_zones = zones,
                             max_iter = 100000)
 ```
 
-
 #HBO Travel Flows
 ```{r}
 HBO_dist <- grvty_balancing(od_zones = zones,
@@ -138,4 +126,85 @@ HBO_dist <- grvty_balancing(od_zones = zones,
                             friction_factor = "F_HBO",
                             tolerance = 5,
                             max_iter = 100000)
+```
+#Convergence
+```{r}
+tibble(HBO_dist$convergence)
+tail(HBW_dist$convergence)
+tibble(HBW_dist$convergence)
+tail(NHB_dist$convergence)
+tibble(NHB_dist$convergence)
+```
+#Flows
+```{r}
+head(NHB_dist$flows)
+table(NHB_dist$flows$flow > 0)
+```
+
+```{r}
+head(HBW_dist$flows)
+table(HBW_dist$flows$flow > 0)
+```
+
+```{r}
+head(HBO_dist$flows)
+table(HBO_dist$flows$flow > 0)
+```
+
+#Visualizing Convergence
+```{r}
+convergence_points <- HBO_dist$convergence %>%
+  mutate(max_diff = max_o_diff + max_d_diff) %>%
+  mutate(which_max = ifelse(max_o_diff > max_d_diff, 
+                            "Productions",
+                            "Attractions"))
+
+ggplot(convergence_points) +
+  geom_line(aes(x = iteration, y = max_diff, lty = which_max)) +
+  scale_y_continuous(name = "Maximum difference from target value",
+                     trans = "log", 
+                     breaks = breaks <- 10^seq(1,5, by=1),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_x_continuous(name = "Iteration",
+                     breaks = breaks <- seq(0, 100000, by=10000),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_linetype(name = "") +
+  theme_minimal()
+```
+
+#Mapping Desire Lines
+```{r}
+zone_boundaries <- here("zones",
+              "boundaries.geojson") %>%
+  st_read(quiet = TRUE)
+
+desire_lines_HBO <- od_to_sf(HBO_dist$flows, zone_boundaries, silent = TRUE) %>%
+  filter(flow > 0)
+
+ggplot(desire_lines_HBO) +
+  annotation_map_tile(type = "cartolight", zoom = 10, progress = "none") +
+  geom_sf(aes(alpha = flow)) +
+  theme_void()
+```
+
+```{r}
+big_attraction <- zones[zones$hbo_attr_bal == max(zones$hbo_attr_bal),]$GEOID
+
+big_attraction
+```
+
+```{r}
+desire_lines_one_zone <- desire_lines_HBO %>%
+  filter(d_id == big_attraction)
+
+ggplot(desire_lines_one_zone) +
+  annotation_map_tile(type = "cartolight", zoom = 11, progress = "none") +
+  geom_sf(aes(alpha = flow)) +
+  theme_void()
 ```
