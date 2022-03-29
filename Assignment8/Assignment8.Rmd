@@ -97,13 +97,13 @@ HBW_dist <- grvty_balancing(od_zones = zones,
                             friction_o_id = "fromId",
                             friction_d_id = "toId",
                             friction_factor = "F_HBW",
-                            tolerance = .0001,
+                            tolerance = .01,
                             max_iter = 150)
 ```
 
 ```{r}
-save(HBW_dist, here("Assignment8",
-                    HBW_dist_update))
+save(HBW_dist, file = here("Assignment8",
+                            "HBW_dist"))
 ```
 
 #NHB Travel Flows
@@ -117,12 +117,12 @@ NHB_dist <- grvty_balancing(od_zones = zones,
                             friction_d_id = "toId",
                             friction_factor = "F_NHB",
                             tolerance = .01,
-                            max_iter = 150000)
+                            max_iter = 15000)
 ```
 
 ```{r}
-save(NHB_dist, here("Assignment8",
-                    NHB_dist_update))
+save(NHB_dist, file = here("Assignment8",
+                    "NHB_dist"))
 ```
 
 #HBO Travel Flows
@@ -136,29 +136,29 @@ HBO_dist <- grvty_balancing(od_zones = zones,
                             friction_d_id = "toId",
                             friction_factor = "F_HBO",
                             tolerance = .01,
-                            max_iter = 150000)
+                            max_iter = 150)
 ```
 
 ```{r}
-save(HBO_dist, here("Assignment8",
-                    HBO_dist_update))
+save(HBO_dist, file = here("Assignment8",
+                    "HBO_dist"))
 ```
 
 #Convergence
 ##HBW Convergence
 ```{r}
 tail(HBW_dist$convergence)
-tibble(HBW_dist$convergence)
+HBW_dist$convergence
 ```
 ##NHB Convergence
 ```{r}
 tail(NHB_dist$convergence)
-tibble(NHB_dist$convergence)
+NHB_dist$convergence
 ```  
 #HBO Convergence
 ```{r}
 tail(HBO_dist$convergence)
-tibble(HBO_dist$convergence)
+HBO_dist$convergence
 ```
 
 #Flows
@@ -196,7 +196,7 @@ ggplot(convergence_points) +
                                       format = "f", 
                                       digits = 0)) +
   scale_x_continuous(name = "Iteration",
-                     breaks = breaks <- seq(0, 100000, by=10000),
+                     breaks = breaks <- seq(0, 100, by=10),
                      labels = formatC(breaks, 
                                       big.mark = ",", 
                                       format = "f", 
