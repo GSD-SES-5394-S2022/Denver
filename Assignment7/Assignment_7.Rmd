@@ -141,6 +141,9 @@ export_summs(NHB_model1, NHB_model2,
              error_format = "(p = {p.value})",
              model.names = c("Full model", "Reduced model"))
 ```
+
+### EXISTING CONDITIONS ###
+
 #Applying trip production model to zonal data
 ```{r}
 existing_zones <- here("existing",
@@ -320,4 +323,223 @@ hbo_attr_map
 ggsave("hbo_attr_map.pdf" ,
          hbo_attr_map)
 ```
+
+
+
+
+### ALTERNATIVE CONDITIONS ###
+
+
+
+
+#Applying trip production model to zonal data
+```{r}
+proposed_zones <- here("alternative",
+                       "data",
+                       "proposed_zones.csv") %>%
+  read_csv() %>%
+  mutate(hbo_prod = new_total_housing_units * HBO_model2$coefficients["(Intercept)"] +
+                    new_twoperson_hh * HBO_model2$coefficients["size_two"],
+         hbw_prod = new_total_housing_units * HBW_model1$coefficients["(Intercept)"] +
+                    new_hh_income_low * HBW_model1$coefficients["inc_levels_low"],
+         nhb_prod = new_total_housing_units * NHB_model1$coefficients["(Intercept)"] +
+                    new_hh_income_low * NHB_model1$coefficients["inc_levels_low"])
+```
+#Applying trip attractions
+```{r}
+proposed_zones <- proposed_zones %>%
+  replace_na(list(new_basic = 0,
+                  new_retail = 0, 
+                  new_service = 0)) %>%
+  mutate(hbo_attr = 0.7 * new_total_housing_units +
+                    0.7 * new_basic +
+                    8.4 * new_retail +
+                    3.5 * new_service) %>%
+  mutate(hbw_attr = 1.2 * (new_basic + 
+                             new_retail + 
+                             new_service)) %>%
+  mutate(nhb_attr = 0.6 * new_total_housing_units +
+                    0.5 * new_basic +
+                    4.7 * new_retail +
+                    1.4 * new_service)
+```
+
+#Comparing productions and attractions
+```{r}
+trip_end_summary <- tibble(Purpose = c("HBO"),
+                           Productions = c(sum(proposed_zones$hbo_prod)),
+                           Attractions = c(sum(proposed_zones$hbo_attr)),
+                           Difference = c(sum(proposed_zones$hbo_attr) - 
+                                            sum(proposed_zones$hbo_prod)))
+
+kable(trip_end_summary, format.args = list(big.mark = ","))
+```
+
+```{r}
+trip_end_summary <- tibble(Purpose = c("HBW"),
+                           Productions = c(sum(proposed_zones$hbw_prod)),
+                           Attractions = c(sum(proposed_zones$hbw_attr)),
+                           Difference = c(sum(proposed_zones$hbw_attr) - 
+                                            sum(proposed_zones$hbw_prod)))
+kable(trip_end_summary, format.args = list(big.mark = ","))
+```
+
+```{r}
+trip_end_summary <- tibble(Purpose = c("NHB"),
+                           Productions = c(sum(proposed_zones$nhb_prod)),
+                           Attractions = c(sum(proposed_zones$nhb_attr)),
+                           Difference = c(sum(proposed_zones$nhb_attr) - 
+                                            sum(proposed_zones$nhb_prod)))
+kable(trip_end_summary, format.args = list(big.mark = ","))
+```
+
+#Balancing productions and attractions
+```{r}
+proposed_zones <- proposed_zones %>%
+  mutate(hbo_attr_bal = hbo_attr * 
+           sum(proposed_zones$hbo_prod) / sum(proposed_zones$hbo_attr)) %>%
+  mutate(hbw_attr_bal = hbw_attr * 
+           sum(proposed_zones$hbw_prod) / sum(proposed_zones$hbw_attr)) %>%
+  mutate(nhb_attr_bal = nhb_attr * 
+           sum(proposed_zones$nhb_prod) / sum(proposed_zones$nhb_attr))
+
+write.csv(proposed_zones, here("Assignment7/proposed_zones.csv"))
+```
+
+#Comparing productions and attractions
+```{r}
+trip_end_summary <- tibble(Purpose = c("HBO"),
+                           Productions = c(sum(proposed_zones$hbo_prod)),
+                           Attractions = c(sum(proposed_zones$hbo_attr_bal)),
+                           Difference = c(sum(proposed_zones$hbo_attr_bal) - 
+                                            sum(proposed_zones$hbo_prod)))
+
+kable(trip_end_summary, format.args = list(big.mark = ","))
+
+trip_end_summary <- tibble(Purpose = c("HBW"),
+                           Productions = c(sum(proposed_zones$hbw_prod)),
+                           Attractions = c(sum(proposed_zones$hbw_attr_bal)),
+                           Difference = c(sum(proposed_zones$hbw_attr_bal) - 
+                                            sum(proposed_zones$hbw_prod)))
+
+kable(trip_end_summary, format.args = list(big.mark = ","))
+
+trip_end_summary <- tibble(Purpose = c("NHB"),
+                           Productions = c(sum(proposed_zones$nhb_prod)),
+                           Attractions = c(sum(proposed_zones$nhb_attr_bal)),
+                           Difference = c(sum(proposed_zones$nhb_attr_bal) - 
+                                            sum(proposed_zones$nhb_prod)))
+
+kable(trip_end_summary, format.args = list(big.mark = ","))
+```
+#Creating a choropleth map
+```{r}
+proposed_zones_select <- proposed_zones %>% 
+  select("GEOID", "hbo_prod", "hbw_prod", "nhb_prod", "hbo_attr_bal", "hbw_attr_bal", "nhb_attr_bal")
+
+zones_pred <- here("zones",
+                   "boundaries1.geojson") %>%
+  st_read()
+
+
+#left join zones and alt_zones
+
+trip_geom <- left_join(zones_pred, proposed_zones_select)
+```
+
+```{r}
+trip_pal <- pnw_palette(name = "Bay", 
+                           n = 6, 
+                           type = "continuous")
+```
+
+```{r}
+hbo_map_alt <- ggplot(trip_geom) +
+  geom_sf(aes(fill = hbo_prod), color=NA) +
+   scale_fill_gradientn(colours = trip_pal,
+                       name = "Tract home based other trips",
+                       breaks = size_brks <- seq(0, 19000, by = 5000),
+                       limits =  c(0,19000)) +
+  theme_void()
+
+hbo_map_alt
+
+ggsave("hbo_map_alt.pdf" ,
+         hbo_map_alt)
+```
+```{r}
+hbw_map_alt <- ggplot(trip_geom) +
+  geom_sf(aes(fill = hbw_prod), color=NA) +
+   scale_fill_gradientn(colours = trip_pal,
+                       name = "Tract home based work trips",
+                       breaks = size_brks <- seq(0, 8000, by = 2000),
+                       limits =  c(0,8000)) +
+  theme_void()
+
+hbw_map_alt
+
+ggsave("hbw_map_alt.pdf" ,
+         hbw_map_alt)
+```
+
+```{r}
+nhb_map_alt <- ggplot(trip_geom) +
+  geom_sf(aes(fill = nhb_prod), color=NA) +
+   scale_fill_gradientn(colours = trip_pal,
+                       name = "Tract non-home based trips",
+                       breaks = size_brks <- seq(0, 12000, by = 3000),
+                       limits =  c(0,12000)) +
+  theme_void()
+
+nhb_map_alt
+
+ggsave("nhb_map_alt.pdf" ,
+         nhb_map_alt)
+```
+
+```{r}
+hbo_attr_map_alt <- ggplot(trip_geom) +
+  geom_sf(aes(fill = hbo_attr_bal), color=NA) +
+   scale_fill_gradientn(colours = trip_pal,
+                       name = "Home based other trip attractions",
+                       breaks = size_brks <- seq(0, 12000, by = 3000),
+                       limits =  c(0,12000)) +
+  theme_void()
+
+hbo_attr_map_alt
+
+ggsave("hbo_attr_map_alt.pdf" ,
+         hbo_attr_map_alt)
+```
+
+```{r}
+hbw_attr_map_alt <- ggplot(trip_geom) +
+  geom_sf(aes(fill = hbw_attr_bal), color=NA) +
+   scale_fill_gradientn(colours = trip_pal,
+                       name = "Home based work trip attractions",
+                       breaks = size_brks <- seq(0, 12000, by = 3000),
+                       limits =  c(0,12000)) +
+  theme_void()
+
+hbw_attr_map_alt
+
+ggsave("hbw_attr_map_alt.pdf" ,
+         hbw_attr_map_alt)
+```
+
+```{r}
+nhb_attr_map_alt <- ggplot(trip_geom) +
+  geom_sf(aes(fill = nhb_attr_bal), color=NA) +
+   scale_fill_gradientn(colours = trip_pal,
+                       name = "Non-home based trip attractions",
+                       breaks = size_brks <- seq(0, 12000, by = 3000),
+                       limits =  c(0,12000)) +
+  theme_void()
+
+nhb_attr_map_alt
+
+ggsave("nhb_attr_map_alt.pdf" ,
+         nhb_attr_map_alt)
+```
+
 
