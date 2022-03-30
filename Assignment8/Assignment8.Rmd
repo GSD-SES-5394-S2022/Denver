@@ -15,6 +15,7 @@ library(scenRios)
 library(sf)
 library(ggplot2)
 library(ggspatial)
+library(lwgeom)
 ```
 
 ```{r}
@@ -24,6 +25,10 @@ install_github("https://github.com/c-voulgaris/scenRios")
 ```{r}
 zones <- here("Assignment7",
               "existing_zones.csv") %>%
+  read_csv(show_col_types = FALSE)
+
+proposed_zones <- here("Assignment7",
+                       "proposed_zones.csv") %>%
   read_csv(show_col_types = FALSE)
 
 skims <- here("existing",
@@ -86,6 +91,8 @@ skims <- skims %>%
          F_HBO = min_time^-3.993*exp(-0.019*min_time),
          F_NHB = min_time^-3.345*exp(-0.003*min_time)) 
 ```
+
+### EXISTING CONDITIONS ###
 
 #HBW Travel Flows
 ```{r}
@@ -180,13 +187,13 @@ table(HBO_dist$flows$flow > 0)
 
 #Visualizing Convergence
 ```{r}
-convergence_points <- HBO_dist$convergence %>%
+convergence_points_HBO <- HBO_dist$convergence %>%
   mutate(max_diff = max_o_diff + max_d_diff) %>%
   mutate(which_max = ifelse(max_o_diff > max_d_diff, 
                             "Productions",
                             "Attractions"))
 
-ggplot(convergence_points) +
+hbo_convergence <- ggplot(convergence_points_HBO) +
   geom_line(aes(x = iteration, y = max_diff, lty = which_max)) +
   scale_y_continuous(name = "Maximum difference from target value",
                      trans = "log", 
@@ -196,16 +203,73 @@ ggplot(convergence_points) +
                                       format = "f", 
                                       digits = 0)) +
   scale_x_continuous(name = "Iteration",
-                     breaks = breaks <- seq(0, 100, by=10),
+                     breaks = breaks <- seq(0, 40, by=10),
                      labels = formatC(breaks, 
                                       big.mark = ",", 
                                       format = "f", 
                                       digits = 0)) +
   scale_linetype(name = "") +
   theme_minimal()
+
+ggsave("convergence_points_HBO.pdf", hbo_convergence)
+```
+```{r}
+convergence_points_HBW <- HBW_dist$convergence %>%
+  mutate(max_diff = max_o_diff + max_d_diff) %>%
+  mutate(which_max = ifelse(max_o_diff > max_d_diff, 
+                            "Productions",
+                            "Attractions"))
+
+hbw_convergence <- ggplot(convergence_points_HBW) +
+  geom_line(aes(x = iteration, y = max_diff, lty = which_max)) +
+  scale_y_continuous(name = "Maximum difference from target value",
+                     trans = "log", 
+                     breaks = breaks <- 10^seq(1,5, by=1),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_x_continuous(name = "Iteration",
+                     breaks = breaks <- seq(0, 20, by=5),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_linetype(name = "") +
+  theme_minimal()
+
+ggsave("convergence_points_HBW.pdf", hbw_convergence)
+```
+```{r}
+convergence_points_NHB <- NHB_dist$convergence %>%
+  mutate(max_diff = max_o_diff + max_d_diff) %>%
+  mutate(which_max = ifelse(max_o_diff > max_d_diff, 
+                            "Productions",
+                            "Attractions"))
+
+nhb_convergence <- ggplot(convergence_points_NHB) +
+  geom_line(aes(x = iteration, y = max_diff, lty = which_max)) +
+  scale_y_continuous(name = "Maximum difference from target value",
+                     trans = "log", 
+                     breaks = breaks <- 10^seq(1,5, by=1),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_x_continuous(name = "Iteration",
+                     breaks = breaks <- seq(0, 25, by=5),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_linetype(name = "") +
+  theme_minimal()
+
+ggsave("convergence_points_NHB.pdf", nhb_convergence)
 ```
 
 #Mapping Desire Lines
+##HBO Flows
 ```{r}
 zone_boundaries <- here("zones",
               "boundaries.geojson") %>%
@@ -221,17 +285,375 @@ ggplot(desire_lines_HBO) +
 ```
 
 ```{r}
-big_attraction <- zones[zones$hbo_attr_bal == max(zones$hbo_attr_bal),]$GEOID
+desire_lines_top_zones_HBO <- desire_lines_HBO %>%
+  filter(d_id == c("08031001702","08031001701", "08001008100", "08005006856", "08005006858"))
 
-big_attraction
-```
-
-```{r}
-desire_lines_one_zone <- desire_lines_HBO %>%
-  filter(d_id == big_attraction)
-
-ggplot(desire_lines_one_zone) +
+fivezones_HBO <- ggplot(desire_lines_top_zones_HBO) +
   annotation_map_tile(type = "cartolight", zoom = 11, progress = "none") +
   geom_sf(aes(alpha = flow)) +
   theme_void()
+
+ggsave("flows_hbo.pdf", fivezones_HBO)
+```
+##NHB Flows
+```{r}
+zone_boundaries <- here("zones",
+              "boundaries.geojson") %>%
+  st_read(quiet = TRUE)
+
+desire_lines_NHB <- od_to_sf(NHB_dist$flows, zone_boundaries, silent = TRUE) %>%
+  filter(flow > 0)
+
+desire_lines_five_zones_NHB <- desire_lines_NHB %>%
+  filter(d_id == c("08031001702","08031001701", "08005006856", "08001008100", "08031003800"))
+
+fivezones_NHB <- ggplot(desire_lines_five_zones_NHB) +
+  annotation_map_tile(type = "cartolight", zoom = 10, progress = "none") +
+  geom_sf(aes(alpha = flow)) +
+  theme_void()
+
+ggsave("flows_nhb.pdf", fivezones_NHB)
+```
+
+##HBW Flows
+```{r}
+zone_boundaries <- here("zones",
+              "boundaries.geojson") %>%
+  st_read(quiet = TRUE)
+
+desire_lines_HBW <- od_to_sf(HBW_dist$flows, zone_boundaries, silent = TRUE) %>%
+  filter(flow > 0)
+
+desire_lines_five_zones_HBW <- desire_lines_HBW %>%
+  filter(d_id == c("08031001702","08031001701", "08005006856", "08005006712", "08001008100"))
+
+fivezones_HBW <- ggplot(desire_lines_five_zones_HBW) +
+  annotation_map_tile(type = "cartolight", zoom = 10, progress = "none") +
+  geom_sf(aes(alpha = flow)) +
+  theme_void()
+
+ggsave("flows_hbw.pdf", fivezones_HBW)
+```
+
+#Comparing Calculated to Observed Times
+```{r}
+ttime_by_purpose
+```
+
+```{r}
+HBO_flows <- HBO_dist$flows %>%
+  rename(fromId = o_id,
+         toId = d_id,
+         HBO_flow = flow)
+
+skims <- skims %>%
+  left_join(HBO_flows) %>%
+  replace_na(list(HBO_flow = 0)) %>%
+  mutate(total_time = HBO_flow * min_time)
+```
+
+```{r}
+HBO_mean_time <- sum(skims$total_time) / sum(skims$HBO_flow)
+
+HBO_mean_time
+```
+
+### ALTERNATIVE SECTION ###
+
+##Alt HBW Travel Flows
+```{r}
+HBW_dist_alt <- grvty_balancing(od_zones = proposed_zones,
+                            friction = skims,
+                            zone_id = "GEOID",
+                            zone_o = "hbw_prod",
+                            zone_d = "hbw_attr_bal",
+                            friction_o_id = "fromId",
+                            friction_d_id = "toId",
+                            friction_factor = "F_HBW",
+                            tolerance = .01,
+                            max_iter = 150)
+```
+
+```{r}
+save(HBW_dist_alt, file = here("Assignment8",
+                            "HBW_dist_alt"))
+```
+
+##Alt NHB Travel Flows
+```{r}
+NHB_dist_alt <- grvty_balancing(od_zones = proposed_zones,
+                            friction = skims,
+                            zone_id = "GEOID",
+                            zone_o = "nhb_prod",
+                            zone_d = "nhb_attr_bal",
+                            friction_o_id = "fromId",
+                            friction_d_id = "toId",
+                            friction_factor = "F_NHB",
+                            tolerance = .01,
+                            max_iter = 150)
+```
+
+```{r}
+save(NHB_dist, file = here("Assignment8",
+                    "NHB_dist_alt"))
+```
+
+##Alt HBO Travel Flows
+```{r}
+HBO_dist_alt <- grvty_balancing(od_zones = proposed_zones,
+                            friction = skims,
+                            zone_id = "GEOID",
+                            zone_o = "hbo_prod",
+                            zone_d = "hbo_attr_bal",
+                            friction_o_id = "fromId",
+                            friction_d_id = "toId",
+                            friction_factor = "F_HBO",
+                            tolerance = .01,
+                            max_iter = 150)
+```
+
+```{r}
+save(HBO_dist, file = here("Assignment8",
+                    "HBO_dist_alt"))
+```
+
+#Visualizing Proposed Convergence
+```{r}
+convergence_points_HBO_alt <- HBO_dist_alt$convergence %>%
+  mutate(max_diff = max_o_diff + max_d_diff) %>%
+  mutate(which_max = ifelse(max_o_diff > max_d_diff, 
+                            "Productions",
+                            "Attractions"))
+
+hbo_convergence_alt <- ggplot(convergence_points_HBO_alt) +
+  geom_line(aes(x = iteration, y = max_diff, lty = which_max)) +
+  scale_y_continuous(name = "Maximum difference from target value",
+                     trans = "log", 
+                     breaks = breaks <- 10^seq(1,5, by=1),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_x_continuous(name = "Iteration",
+                     breaks = breaks <- seq(0, 40, by=10),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_linetype(name = "") +
+  theme_minimal()
+
+ggsave("convergence_points_HBO_alt.pdf", hbo_convergence_alt)
+```
+
+```{r}
+convergence_points_HBW_alt <- HBW_dist_alt$convergence %>%
+  mutate(max_diff = max_o_diff + max_d_diff) %>%
+  mutate(which_max = ifelse(max_o_diff > max_d_diff, 
+                            "Productions",
+                            "Attractions"))
+
+hbw_convergence_alt <- ggplot(convergence_points_HBW_alt) +
+  geom_line(aes(x = iteration, y = max_diff, lty = which_max)) +
+  scale_y_continuous(name = "Maximum difference from target value",
+                     trans = "log", 
+                     breaks = breaks <- 10^seq(1,5, by=1),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_x_continuous(name = "Iteration",
+                     breaks = breaks <- seq(0, 20, by=5),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_linetype(name = "") +
+  theme_minimal()
+
+ggsave("convergence_points_HBW_alt.pdf", hbw_convergence_alt)
+```
+
+```{r}
+convergence_points_NHB_alt <- NHB_dist_alt$convergence %>%
+  mutate(max_diff = max_o_diff + max_d_diff) %>%
+  mutate(which_max = ifelse(max_o_diff > max_d_diff, 
+                            "Productions",
+                            "Attractions"))
+
+nhb_convergence_alt <- ggplot(convergence_points_NHB_alt) +
+  geom_line(aes(x = iteration, y = max_diff, lty = which_max)) +
+  scale_y_continuous(name = "Maximum difference from target value",
+                     trans = "log", 
+                     breaks = breaks <- 10^seq(1,5, by=1),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_x_continuous(name = "Iteration",
+                     breaks = breaks <- seq(0, 25, by=5),
+                     labels = formatC(breaks, 
+                                      big.mark = ",", 
+                                      format = "f", 
+                                      digits = 0)) +
+  scale_linetype(name = "") +
+  theme_minimal()
+
+ggsave("convergence_points_NHB_alt.pdf", nhb_convergence_alt)
+```
+
+#Mapping Desire Lines
+##HBO Flows
+```{r}
+zone_boundaries <- here("zones",
+              "boundaries.geojson") %>%
+  st_read(quiet = TRUE)
+
+desire_lines_HBO_alt <- od_to_sf(HBO_dist_alt$flows, zone_boundaries, silent = TRUE) %>%
+  filter(flow > 0)
+
+desire_lines_top_zones_HBO_alt <- desire_lines_HBO_alt %>%
+  filter(d_id == c("08031002702","08031003800", "08031001702", "08031004301", "08005006856"))
+
+fivezones_HBO_alt <- ggplot(desire_lines_top_zones_HBO_alt) +
+  annotation_map_tile(type = "cartolight", zoom = 11, progress = "none") +
+  geom_sf(aes(alpha = flow)) +
+  theme_void()
+
+ggsave("flows_hbo_alt.pdf", fivezones_HBO_alt)
+```
+##NHB Flows
+```{r}
+zone_boundaries <- here("zones",
+              "boundaries.geojson") %>%
+  st_read(quiet = TRUE)
+
+desire_lines_NHB_alt <- od_to_sf(NHB_dist_alt$flows, zone_boundaries, silent = TRUE) %>%
+  filter(flow > 0)
+
+desire_lines_five_zones_NHB_alt <- desire_lines_NHB_alt %>%
+  filter(d_id == c("08031002702","08031003800", "08031001702", "08005006856", "08031004301"))
+
+fivezones_NHB_alt <- ggplot(desire_lines_five_zones_NHB_alt) +
+  annotation_map_tile(type = "cartolight", zoom = 10, progress = "none") +
+  geom_sf(aes(alpha = flow)) +
+  theme_void()
+
+ggsave("flows_nhb_alt.pdf", fivezones_NHB_alt)
+```
+
+##HBW Flows
+```{r}
+zone_boundaries <- here("zones",
+              "boundaries.geojson") %>%
+  st_read(quiet = TRUE)
+
+desire_lines_HBW_alt <- od_to_sf(HBW_dist_alt$flows, zone_boundaries, silent = TRUE) %>%
+  filter(flow > 0)
+
+desire_lines_five_zones_HBW_alt <- desire_lines_HBW_alt %>%
+  filter(d_id == c("08031002702","08031001702", "08005006856", "08031004301", "08031003800"))
+
+fivezones_HBW_alt <- ggplot(desire_lines_five_zones_HBW_alt) +
+  annotation_map_tile(type = "cartolight", zoom = 10, progress = "none") +
+  geom_sf(aes(alpha = flow)) +
+  theme_void()
+
+ggsave("flows_hbw_alt.pdf", fivezones_HBW_alt)
+```
+
+#Looking at difference between existing and proposed trip flows
+
+```{r} 
+#thanks for the inspiration San Jose!
+#combining desire line
+desire_lines_all <- desire_lines_HBO %>%
+  rename(hbo_flow = flow) %>%
+  as.data.frame() %>%
+  full_join(desire_lines_HBW %>%
+              rename(hbw_flow = flow) %>%
+              as.data.frame(), 
+            by = c("o_id", "d_id", "geometry")) %>%
+  full_join(desire_lines_NHB %>%
+              rename(nhb_flow = flow) %>%
+              as.data.frame(),
+            by = c("o_id", "d_id", "geometry")) %>%
+  st_as_sf()
+```
+```{r}
+desire_lines_all_alt <- desire_lines_HBO_alt %>%
+  rename(hbo_flow_alt = flow) %>%
+  as.data.frame() %>%
+  full_join(desire_lines_HBW_alt %>%
+              rename(hbw_flow_alt = flow) %>%
+              as.data.frame(), 
+            by = c("o_id", "d_id", "geometry")) %>%
+  full_join(desire_lines_NHB_alt %>%
+              rename(nhb_flow_alt = flow) %>%
+              as.data.frame(),
+            by = c("o_id", "d_id", "geometry")) %>%
+  st_as_sf()
+```
+#Joining existing and proposed
+```{r}
+desire_lines_all_combined <- desire_lines_all %>%
+  as.data.frame() %>%
+  full_join(desire_lines_all_alt %>%
+              as.data.frame(),
+            by = c("o_id", "d_id", "geometry")) %>%
+  mutate(hbo_flow_dif = (hbo_flow_alt - hbo_flow) / hbo_flow,
+         hbw_flow_dif = (hbw_flow_alt - hbw_flow) / hbw_flow,
+         nhb_flow_dif = (nhb_flow_alt - nhb_flow) / nhb_flow) %>%
+  st_as_sf()
+```
+
+```{r}
+trip_pal <- pnw_palette(name = "Bay", 
+                           n = 6, 
+                           type = "continuous")
+```
+
+```{r}
+diff_NHB <- od_to_sf(desire_lines_all_combined, zone_boundaries, silent = TRUE) %>%
+  filter(o_id == "08001009206") %>%
+  filter(nhb_flow_dif != 0)
+
+diff_NHB_map <- ggplot(diff_NHB) +
+  annotation_map_tile(type = "cartolight", zoom = 10, progress = "none") +
+  geom_sf(aes(color = nhb_flow_dif)) +
+  scale_color_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0, trans = "pseudo_log") +
+  theme_void()
+
+diff_NHB_map
+
+ggsave("diff_NHB.pdf", diff_NHB_map)
+```
+
+```{r}
+diff_HBW <- od_to_sf(desire_lines_all_combined, zone_boundaries, silent = TRUE) %>%
+  filter(o_id == "08059060500") %>%
+  filter(hbw_flow_dif != 0)
+
+diff_HBW_map <- ggplot(diff_HBW) +
+  annotation_map_tile(type = "cartolight", zoom = 10, progress = "none") +
+  geom_sf(aes(color = hbw_flow_dif)) +
+  scale_color_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0, trans = "pseudo_log") +
+  theme_void()
+
+diff_HBW_map
+
+ggsave("diff_HBW.pdf", diff_HBW_map)
+```
+```{r}
+diff_HBO <- od_to_sf(desire_lines_all_combined, zone_boundaries, silent = TRUE) %>%
+  filter(o_id == "08001009204") %>%
+  filter(hbo_flow_dif != 0)
+
+diff_HBO_map <- ggplot(diff_HBO) +
+  annotation_map_tile(type = "cartolight", zoom = 10, progress = "none") +
+  geom_sf(aes(color = hbo_flow_dif)) +
+  scale_color_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0, trans = "pseudo_log") +
+  theme_void()
+
+ggsave("diff_HBO.pdf", diff_HBO_map)
 ```

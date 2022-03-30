@@ -71,6 +71,10 @@ final_tracts_sel <- combinedtracts %>%
          new_basic,
          new_retail,
          new_service)
+
+write_csv(final_tracts_sel, here("alternative",
+                                 "data",
+                                 "proposed_zones.csv"))
 ```
 
 ### Combining Existing Conditions Tract Data with Proposed Conditions Tract Data
