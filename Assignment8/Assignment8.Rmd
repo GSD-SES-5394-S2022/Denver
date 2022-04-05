@@ -16,6 +16,7 @@ library(sf)
 library(ggplot2)
 library(ggspatial)
 library(lwgeom)
+library(PNWColors)
 ```
 
 ```{r}
@@ -45,7 +46,7 @@ download.file("https://nhts.ornl.gov/assets/2016/download/csv.zip", temp)
 trips <- read_csv(unz(temp, "trippub.csv"), 
                       show_col_types = FALSE) %>%
   # 15380 is the GEOID for Buffalo - should be 19740 for Denver
-  filter(HH_CBSA == "15380")
+  filter(HH_CBSA == "19740")
 
 unlink(temp)
 ```
@@ -355,7 +356,7 @@ NHB_flows <- NHB_dist$flows %>%
          NHB_flow = flow)
 ```
 ```{r}
-ex_skims <- skims %>%
+ex_skims_update <- skims %>%
   left_join(HBO_flows) %>%
   left_join(HBW_flows) %>%
   left_join(NHB_flows) %>%
@@ -368,7 +369,14 @@ ex_skims <- skims %>%
 ```
 
 ```{r}
-HBO_mean_time <- sum(skims$total_time) / sum(skims$HBO_flow)
+
+write.csv(ex_skims_update, here("existing",
+                                "data",
+                                "ex_skims_update.csv"))
+```
+
+```{r}
+HBO_mean_time <- sum(ex_skims_update$total_time) / sum(ex_skims_update$HBO_flow)
 
 HBO_mean_time
 ```
@@ -378,7 +386,7 @@ HBO_mean_time
 ##Alt HBW Travel Flows
 ```{r}
 HBW_dist_alt <- grvty_balancing(od_zones = proposed_zones,
-                            friction = skims,
+                            friction = ex_skims_update,
                             zone_id = "GEOID",
                             zone_o = "hbw_prod",
                             zone_d = "hbw_attr_bal",
@@ -397,7 +405,7 @@ save(HBW_dist_alt, file = here("Assignment8",
 ##Alt NHB Travel Flows
 ```{r}
 NHB_dist_alt <- grvty_balancing(od_zones = proposed_zones,
-                            friction = skims,
+                            friction = ex_skims_update,
                             zone_id = "GEOID",
                             zone_o = "nhb_prod",
                             zone_d = "nhb_attr_bal",
@@ -416,7 +424,7 @@ save(NHB_dist, file = here("Assignment8",
 ##Alt HBO Travel Flows
 ```{r}
 HBO_dist_alt <- grvty_balancing(od_zones = proposed_zones,
-                            friction = skims,
+                            friction = ex_skims_update,
                             zone_id = "GEOID",
                             zone_o = "hbo_prod",
                             zone_d = "hbo_attr_bal",
@@ -592,7 +600,7 @@ NHB_flows_alt <- NHB_dist_alt$flows %>%
          NHB_flow = flow)
 ```
 ```{r}
-alt_skims <- skims %>%
+alt_skims_update <- skims %>%
   left_join(HBO_flows_alt) %>%
   left_join(HBW_flows_alt) %>%
   left_join(NHB_flows_alt) %>%
@@ -604,6 +612,12 @@ alt_skims <- skims %>%
          total_time_HBW = HBW_flow * min_time)
 ```
 
+```{r}
+
+write.csv(alt_skims_update, here("alternative",
+                                "data",
+                                "alt_skims_update.csv"))
+```
 #Looking at difference between existing and proposed trip flows
 
 ```{r} 
