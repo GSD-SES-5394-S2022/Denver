@@ -94,7 +94,7 @@ We first load the skims from assignment 4.
 ```{r}
 	skims <- here("existing",
 	              "data",
-	              "ex_skims.csv") %>%
+	              "ex_skims_update.csv") %>%
 	  read_csv(show_col_types = FALSE)
 	
 	skims <- skims %>%
@@ -102,7 +102,7 @@ We first load the skims from assignment 4.
 	
 	alt_skims <- here("alternative",
 	              "data",
-	              "alt_skims.csv") %>%
+	              "alt_skims_update.csv") %>%
 	  read_csv(show_col_types = FALSE)
 	
 	alt_skims <- alt_skims %>%
