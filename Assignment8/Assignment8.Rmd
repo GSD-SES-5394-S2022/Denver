@@ -345,11 +345,26 @@ HBO_flows <- HBO_dist$flows %>%
   rename(fromId = o_id,
          toId = d_id,
          HBO_flow = flow)
-
-skims <- skims %>%
+HBW_flows <- HBW_dist$flows %>%
+  rename(fromId = o_id,
+         toId = d_id,
+         HBW_flow = flow)
+NHB_flows <- NHB_dist$flows %>%
+  rename(fromId = o_id,
+         toId = d_id,
+         NHB_flow = flow)
+```
+```{r}
+ex_skims <- skims %>%
   left_join(HBO_flows) %>%
+  left_join(HBW_flows) %>%
+  left_join(NHB_flows) %>%
   replace_na(list(HBO_flow = 0)) %>%
-  mutate(total_time = HBO_flow * min_time)
+  replace_na(list(NHB_flow = 0)) %>%
+  replace_na(list(HBW_flow = 0)) %>%
+  mutate(total_time_HBO = HBO_flow * min_time,
+         total_time_NHB = NHB_flow * min_time,
+         total_time_HBW = HBW_flow * min_time)
 ```
 
 ```{r}
@@ -560,6 +575,33 @@ fivezones_HBW_alt <- ggplot(desire_lines_five_zones_HBW_alt) +
   theme_void()
 
 ggsave("flows_hbw_alt.pdf", fivezones_HBW_alt)
+```
+
+```{r}
+HBO_flows_alt <- HBO_dist_alt$flows %>%
+  rename(fromId = o_id,
+         toId = d_id,
+         HBO_flow = flow)
+HBW_flows_alt <- HBW_dist_alt$flows %>%
+  rename(fromId = o_id,
+         toId = d_id,
+         HBW_flow = flow)
+NHB_flows_alt <- NHB_dist_alt$flows %>%
+  rename(fromId = o_id,
+         toId = d_id,
+         NHB_flow = flow)
+```
+```{r}
+alt_skims <- skims %>%
+  left_join(HBO_flows_alt) %>%
+  left_join(HBW_flows_alt) %>%
+  left_join(NHB_flows_alt) %>%
+  replace_na(list(HBO_flow = 0)) %>%
+  replace_na(list(NHB_flow = 0)) %>%
+  replace_na(list(HBW_flow = 0)) %>%
+  mutate(total_time_HBO = HBO_flow * min_time,
+         total_time_NHB = NHB_flow * min_time,
+         total_time_HBW = HBW_flow * min_time)
 ```
 
 #Looking at difference between existing and proposed trip flows
