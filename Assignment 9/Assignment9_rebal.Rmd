@@ -1631,3 +1631,67 @@ Now we calculate the probability that someone who will travel by car will take a
 	model_compare2
 ```
 
+##Visualizing 
+
+```{r}
+hbo <- c(mode_by_purpose[1,2],mode_by_purpose[1,3],mode_by_purpose[1,4],mode_by_purpose[1,5],mode_by_purpose[1,6])
+mode_types <- c("Bike", "SOV", "HOV", "Transit","Walk")
+hbodf <- data.frame(hbo, mode_types)
+
+hbo_bar_chart <- ggplot(hbodf, aes(fill=mode_types, 
+                   x=1, 
+                   y=hbo,
+                   label = mode_types)) +
+    geom_bar(stat="identity") 
+    
+hbo_bar_chart
+```
+```{r}
+pie_chart_hbo <- hbo_bar_chart +
+  coord_polar(theta = "y") +
+  theme_void()
+
+pie_chart_hbo 
+```
+```{r}
+hbw <- c(mode_by_purpose[2,2],mode_by_purpose[2,3],mode_by_purpose[2,4],mode_by_purpose[2,5],mode_by_purpose[2,6])
+mode_types <- c("Bike", "SOV", "HOV", "Transit","Walk")
+hbwdf <- data.frame(hbw, mode_types)
+
+hbw_bar_chart <- ggplot(hbwdf, aes(fill=mode_types, 
+                   x=1, 
+                   y=hbw,
+                   label = mode_types)) +
+    geom_bar(stat="identity") 
+    
+hbw_bar_chart
+```
+
+```{r}
+pie_chart_hbw <- hbw_bar_chart +
+  coord_polar(theta = "y") +
+  theme_void()
+
+pie_chart_hbw
+```
+```{r}
+nhb <- c(mode_by_purpose[3,2],mode_by_purpose[3,3],mode_by_purpose[3,4],mode_by_purpose[3,5],mode_by_purpose[3,6])
+mode_types <- c("Bike", "SOV", "HOV", "Transit","Walk")
+nhbdf <- data.frame(nhb, mode_types)
+
+nhb_bar_chart <- ggplot(nhbdf, aes(fill=mode_types, 
+                   x=1, 
+                   y=nhb,
+                   label = mode_types)) +
+    geom_bar(stat="identity") 
+    
+nhb_bar_chart
+```
+
+```{r}
+pie_chart_nhb <- nhb_bar_chart +
+  coord_polar(theta = "y") +
+  theme_void()
+
+pie_chart_nhb
+```
