@@ -1653,6 +1653,8 @@ pie_chart_hbo <- hbo_bar_chart +
   theme_void()
 
 pie_chart_hbo 
+
+ggsave("hbo_mode_choice.pdf", pie_chart_hbo)
 ```
 ```{r}
 hbw <- c(mode_by_purpose[[2,2]],mode_by_purpose[[2,3]],mode_by_purpose[[2,4]],mode_by_purpose[[2,5]],mode_by_purpose[[2,6]])
@@ -1675,6 +1677,8 @@ pie_chart_hbw <- hbw_bar_chart +
   theme_void()
 
 pie_chart_hbw
+
+ggsave("hbw_mode_choice.pdf", pie_chart_hbw)
 ```
 ```{r}
 nhb <- c(mode_by_purpose[[3,2]],mode_by_purpose[[3,3]],mode_by_purpose[[3,4]],mode_by_purpose[[3,5]],mode_by_purpose[[3,6]])
@@ -1697,4 +1701,6 @@ pie_chart_nhb <- nhb_bar_chart +
   theme_void()
 
 pie_chart_nhb
+
+ggsave("nhb_mode_choice.pdf", pie_chart_nhb)
 ```
