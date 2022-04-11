@@ -1,0 +1,232 @@
+---
+title: "Assignment10"
+author: "Arnav Murulidhar"
+date: "4/11/2022"
+output: html_document
+---
+
+# Load Libraries
+
+```{r}
+options(java.parameters = "-Xmx2G")
+
+library(here)
+library(tidyverse)
+library(stplanr)
+library(r5r)
+library(sf)
+```
+
+#Load skims files
+
+```{r}
+skims <- here("existing",
+                     "data",
+                     "ex_skims_update.csv") %>%
+  read_csv(show_col_types = FALSE) %>%
+  select(fromId, 
+         toId, 
+         n_transit_HBO,
+         n_SOV_HBO,
+         n_HOV_HBO,
+         n_walk_HBO,
+         n_bike_HBO,
+         n_transit_HBW,
+         n_SOV_HBW,
+         n_HOV_HBW,
+         n_walk_HBW,
+         n_bike_HBW,
+         n_transit_NHB,
+         n_SOV_NHB,
+         n_HOV_NHB,
+         n_walk_NHB,
+         n_bike_NHB,
+         routes) %>%
+  mutate(fromId = as.character(fromId),
+         toId = as.character(toId))
+
+alt_skims <- here("alternative",
+                     "data",
+                     "alt_skims_update.csv") %>%
+  read_csv(show_col_types = FALSE) %>%
+  select(fromId, 
+         toId, 
+         n_transit_HBO,
+         n_SOV_HBO,
+         n_HOV_HBO,
+         n_walk_HBO,
+         n_bike_HBO,
+         n_transit_HBW,
+         n_SOV_HBW,
+         n_HOV_HBW,
+         n_walk_HBW,
+         n_bike_HBW,
+         n_transit_NHB,
+         n_SOV_NHB,
+         n_HOV_NHB,
+         n_walk_NHB,
+         n_bike_NHB,
+         routes) %>%
+  mutate(fromId = as.character(fromId),
+         toId = as.character(toId))
+```
+
+### HBO ###
+
+#Convert HBO PA matrix to OD matrix
+
+```{r}
+HBO_PA_mat <- skims %>%
+  od_to_odmatrix(attrib = "n_transit_HBO", 
+                 name_orig = "fromId",
+                 name_dest = "toId") 
+
+HBO_PA_mat <- HBO_PA_mat[,row.names(HBO_PA_mat)]
+```
+
+#Transpose HBO Matrix
+
+```{r}
+HBO_PA_mat_trans <- t(HBO_PA_mat)
+```
+
+#Average HBO matrix w transpose
+```{r}
+HBO_OD_mat <- (HBO_PA_mat + HBO_PA_mat_trans) / 2
+```
+
+#Convert matrix to data frame 
+```{r}
+HBO_OD_table <- HBO_OD_mat %>%
+  odmatrix_to_od() %>%
+  rename(fromId = orig,
+         toId = dest) %>%
+  left_join(skims) %>%
+  select(-n_transit_HBO)
+```
+#Count trips using each HBO route
+```{r}
+HBO_route_trips <- HBO_OD_table %>%
+  filter(flow > 0 & !is.na(routes)) %>%
+  mutate(route_1 = str_split_fixed(routes, "\\|", 3)[,1],
+         route_2 = str_split_fixed(routes, "\\|", 3)[,2],
+         route_3 = str_split_fixed(routes, "\\|", 3)[,3]) %>%
+  pivot_longer(cols = c(route_1, route_2, route_3),
+               values_to = "route") %>%
+  filter(route != "") %>%
+  select(route, flow) %>%
+  group_by(route) %>%
+  summarize(ridership = round(sum(flow)))
+```
+
+### HBW ###
+
+#Convert HBW PA matrix to OD matrix
+
+```{r}
+HBW_PA_mat <- skims %>%
+  od_to_odmatrix(attrib = "n_transit_HBW", 
+                 name_orig = "fromId",
+                 name_dest = "toId") 
+
+HBW_PA_mat <- HBW_PA_mat[,row.names(HBW_PA_mat)]
+```
+
+#Transpose HBW Matrix
+
+```{r}
+HBW_PA_mat_trans <- t(HBW_PA_mat)
+```
+
+#Average HBW matrix w transpose
+```{r}
+HBW_OD_mat <- (HBW_PA_mat + HBW_PA_mat_trans) / 2
+```
+
+#Convert matrix to data frame 
+```{r}
+HBW_OD_table <- HBW_OD_mat %>%
+  odmatrix_to_od() %>%
+  rename(fromId = orig,
+         toId = dest) %>%
+  left_join(skims) %>%
+  select(-n_transit_HBW)
+```
+#Count trips using each HBW route
+```{r}
+HBW_route_trips <- HBW_OD_table %>%
+  filter(flow > 0 & !is.na(routes)) %>%
+  mutate(route_1 = str_split_fixed(routes, "\\|", 3)[,1],
+         route_2 = str_split_fixed(routes, "\\|", 3)[,2],
+         route_3 = str_split_fixed(routes, "\\|", 3)[,3]) %>%
+  pivot_longer(cols = c(route_1, route_2, route_3),
+               values_to = "route") %>%
+  filter(route != "") %>%
+  select(route, flow) %>%
+  group_by(route) %>%
+  summarize(ridership = round(sum(flow)))
+```
+
+### NHB ###
+
+#Convert NHB PA matrix to OD matrix
+
+```{r}
+NHB_PA_mat <- skims %>%
+  od_to_odmatrix(attrib = "n_transit_NHB", 
+                 name_orig = "fromId",
+                 name_dest = "toId") 
+
+NHB_PA_mat <- NHB_PA_mat[,row.names(NHB_PA_mat)]
+```
+
+#Transpose NHB Matrix
+
+```{r}
+NHB_PA_mat_trans <- t(NHB_PA_mat)
+```
+
+#Average NHB matrix w transpose
+```{r}
+NHB_OD_mat <- (NHB_PA_mat + NHB_PA_mat_trans) / 2
+```
+
+#Convert matrix to data frame 
+```{r}
+NHB_OD_table <- NHB_OD_mat %>%
+  odmatrix_to_od() %>%
+  rename(fromId = orig,
+         toId = dest) %>%
+  left_join(skims) %>%
+  select(-n_transit_NHB)
+```
+#Count trips using each NHB route
+```{r}
+NHB_route_trips <- NHB_OD_table %>%
+  filter(flow > 0 & !is.na(routes)) %>%
+  mutate(route_1 = str_split_fixed(routes, "\\|", 3)[,1],
+         route_2 = str_split_fixed(routes, "\\|", 3)[,2],
+         route_3 = str_split_fixed(routes, "\\|", 3)[,3]) %>%
+  pivot_longer(cols = c(route_1, route_2, route_3),
+               values_to = "route") %>%
+  filter(route != "") %>%
+  select(route, flow) %>%
+  group_by(route) %>%
+  summarize(ridership = round(sum(flow)))
+```
+
+#Calculate total transit ridership by route
+```{r}
+#Load ridership of all different trip purposes
+TOT_route_trips = merge(x=HBW_route_trips,y=HBO_route_trips,by="route",all=TRUE)
+TOT_route_trips = merge(x=TOT_route_trips,y=NHB_route_trips,by="route",all=TRUE)
+
+#Replace NA with 0
+TOT_route_trips[is.na(TOT_route_trips)] = 0
+
+#Calculate total ridership for each route
+TOT_route_trips$total_trips = rowSums(TOT_route_trips[,2:4])
+```
+
+
+
