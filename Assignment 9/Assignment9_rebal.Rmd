@@ -1631,6 +1631,18 @@ Now we calculate the probability that someone who will travel by car will take a
 	model_compare2
 ```
 
+Writing updated existing and alt skims to file
+
+```{r}
+write.csv(skims, here("existing",
+                                "data",
+                                "ex_skims_update.csv"))
+
+write.csv(alt_skims, here("alternative",
+                                "data",
+                                "alt_skims_update.csv"))
+```
+
 ##Visualizing 
 
 ```{r}
