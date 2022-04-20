@@ -8,7 +8,7 @@ output: html_document
 # Load Libraries
 
 ```{r}
-options(java.parameters = "-Xmx2G")
+options(java.parameters = "-Xmx18G")
 
 library(here)
 library(tidyverse)
@@ -250,14 +250,17 @@ r5r_core_existing <- here("existing",
                           "networks") %>%
   setup_r5(verbose = FALSE)
 
-ped_dist <- detailed_itineraries(r5r_core_existing,
-                                 origins = origins,
-                                 destinations = destinations,
-                                 mode = "WALK",
-                                 verbose = FALSE)  %>%
-  mutate(miles = distance / 1609.34) %>%
-  select(fromId, toId, miles) %>%
-  st_drop_geometry()
+#ped_dist <- detailed_itineraries(r5r_core_existing,
+ #                                origins = origins,
+  #                               destinations = destinations,
+   #                              mode = "WALK",
+    #                             verbose = FALSE)  %>%
+  #mutate(miles = distance / 1609.34) %>%
+  #select(fromId, toId, miles) %>%
+  #st_drop_geometry()
+
+#write_csv(ped_dist, here("Assignment10",
+ #                        "ped_dist.csv"))
 
 drive_dist <- detailed_itineraries(r5r_core_existing,
                                  origins = origins,
@@ -268,6 +271,9 @@ drive_dist <- detailed_itineraries(r5r_core_existing,
   select(fromId, toId, miles) %>%
   st_drop_geometry()
 
+write_csv(drive_dist, here("Assignment10",
+                         "drive_dist.csv"))
+
 bike_dist <- detailed_itineraries(r5r_core_existing,
                                  origins = origins,
                                  destinations = destinations,
@@ -276,6 +282,9 @@ bike_dist <- detailed_itineraries(r5r_core_existing,
   mutate(miles = distance / 1609.34) %>%
   select(fromId, toId, miles) %>%
   st_drop_geometry()
+
+write_csv(bike_dist, here("Assignment10",
+                         "bike_dist.csv"))
 
 stop_r5() 
 
@@ -294,6 +303,9 @@ HBO_PMT_car <- skims %>%
             total_HOV_miles = sum(PMT_HOV_HBO))
 
 HBO_PMT_car
+
+write_csv(HBO_PMT_car, here("Assignment10",
+                         "HBO_PMT_car.csv"))
 ```
 
 #Calculate VMT for HBO trips
@@ -302,6 +314,9 @@ HBO_VMT <- HBO_PMT_car$total_SOV_miles[1] +
        HBO_PMT_car$total_HOV_miles[1] / 2.71
 
 HBO_VMT
+
+write_csv(HBO_VMT, here("Assignment10",
+                         "HBO_VMT.csv"))
 ```
 
 #Calculate PMT by Bike for HBO trips
@@ -314,7 +329,10 @@ HBO_PMT_bike <- skims %>%
 
 HBO_PMT_bike
 ```
-
+```{r}
+write_csv(HBO_PMT_bike, here("Assignment10",
+                         "HBO_PMT_bike.csv"))
+```
 #Calculate PMT by Walk for HBO trips
 ```{r}
 HBO_PMT_walk <- skims %>%
@@ -324,6 +342,11 @@ HBO_PMT_walk <- skims %>%
   summarize(total_walk_miles = sum(PMT_walk_HBO))
 
 HBO_PMT_walk
+```
+
+```{r}
+write_csv(HBO_PMT_walk, here("Assignment10",
+                         "HBO_PMT_walk.csv"))
 ```
 
 ### HBW ###
@@ -338,6 +361,9 @@ HBW_PMT_car <- skims %>%
             total_HOV_miles = sum(PMT_HOV_HBW))
 
 HBW_PMT_car
+
+write_csv(HBW_PMT_car, here("Assignment10",
+                         "HBW_PMT_car.csv"))
 ```
 
 #Calculate VMT for HBW trips
@@ -346,6 +372,9 @@ HBW_VMT <- HBW_PMT_car$total_SOV_miles[1] +
        HBW_PMT_car$total_HOV_miles[1] / 2.71
 
 HBW_VMT
+
+write_csv(HBW_VMT, here("Assignment10",
+                         "HBW_VMT.csv"))
 ```
 
 #Calculate PMT by Bike for HBW trips
@@ -359,6 +388,11 @@ HBW_PMT_bike <- skims %>%
 HBW_PMT_bike
 ```
 
+```{r}
+write_csv(HBW_PMT_bike, here("Assignment10",
+                         "HBW_PMT_bike.csv"))
+```
+
 #Calculate PMT by Walk for HBW trips
 ```{r}
 HBW_PMT_walk <- skims %>%
@@ -369,6 +403,12 @@ HBW_PMT_walk <- skims %>%
 
 HBW_PMT_walk
 ```
+
+```{r}
+write_csv(HBW_PMT_walk, here("Assignment10",
+                         "HBW_PMT_walk.csv"))
+```
+
 
 ### NHB ###
 #Calculate PMT by Car for NHB trips
@@ -382,6 +422,9 @@ NHB_PMT_car <- skims %>%
             total_HOV_miles = sum(PMT_HOV_NHB))
 
 NHB_PMT_car
+
+write_csv(NHB_PMT_car, here("Assignment10",
+                         "NHB_PMT_car.csv"))
 ```
 
 #Calculate VMT for NHB trips
@@ -390,6 +433,9 @@ NHB_VMT <- NHB_PMT_car$total_SOV_miles[1] +
        NHB_PMT_car$total_HOV_miles[1] / 2.71
 
 NHB_VMT
+
+write_csv(NHB_VMT, here("Assignment10",
+                         "NHB_VMT.csv"))
 ```
 
 #Calculate PMT by Bike for NHB trips
@@ -403,6 +449,12 @@ NHB_PMT_bike <- skims %>%
 NHB_PMT_bike
 ```
 
+```{r}
+write_csv(NHB_PMT_bike, here("Assignment10",
+                         "NHB_PMT_bike.csv"))
+```
+
+
 #Calculate PMT by Walk for NHB trips
 ```{r}
 NHB_PMT_walk <- skims %>%
@@ -414,6 +466,11 @@ NHB_PMT_walk <- skims %>%
 NHB_PMT_walk
 ```
 
+```{r}
+write_csv(NHB_PMT_walk, here("Assignment10",
+                         "NHB_PMT_walk.csv"))
+```
+
 ########### ALTERNATIVE CONDITIONS ########### 
 
 ### HBO ###
@@ -421,37 +478,37 @@ NHB_PMT_walk
 #Convert HBO PA matrix to OD matrix
 
 ```{r}
-HBO_PA_mat <- skims %>%
+alt_HBO_PA_mat <- alt_skims %>%
   od_to_odmatrix(attrib = "n_transit_HBO", 
                  name_orig = "fromId",
                  name_dest = "toId") 
 
-HBO_PA_mat <- HBO_PA_mat[,row.names(HBO_PA_mat)]
+alt_HBO_PA_mat <- HBO_PA_mat[,row.names(HBO_PA_mat)]
 ```
 
 #Transpose HBO Matrix
 
 ```{r}
-HBO_PA_mat_trans <- t(HBO_PA_mat)
+alt_HBO_PA_mat_trans <- t(alt_HBO_PA_mat)
 ```
 
 #Average HBO matrix w transpose
 ```{r}
-HBO_OD_mat <- (HBO_PA_mat + HBO_PA_mat_trans) / 2
+alt_HBO_OD_mat <- (alt_HBO_PA_mat + alt_HBO_PA_mat_trans) / 2
 ```
 
 #Convert matrix to data frame 
 ```{r}
-HBO_OD_table <- HBO_OD_mat %>%
+alt_HBO_OD_table <- alt_HBO_OD_mat %>%
   odmatrix_to_od() %>%
   rename(fromId = orig,
          toId = dest) %>%
-  left_join(skims) %>%
+  left_join(alt_skims) %>%
   select(-n_transit_HBO)
 ```
 #Count trips using each HBO route
 ```{r}
-HBO_route_trips <- HBO_OD_table %>%
+alt_HBO_route_trips <- alt_HBO_OD_table %>%
   filter(flow > 0 & !is.na(routes)) %>%
   mutate(route_1 = str_split_fixed(routes, "\\|", 3)[,1],
          route_2 = str_split_fixed(routes, "\\|", 3)[,2],
@@ -469,37 +526,37 @@ HBO_route_trips <- HBO_OD_table %>%
 #Convert HBW PA matrix to OD matrix
 
 ```{r}
-HBW_PA_mat <- skims %>%
+alt_HBW_PA_mat <- alt_skims %>%
   od_to_odmatrix(attrib = "n_transit_HBW", 
                  name_orig = "fromId",
                  name_dest = "toId") 
 
-HBW_PA_mat <- HBW_PA_mat[,row.names(HBW_PA_mat)]
+alt_HBW_PA_mat <- alt_HBW_PA_mat[,row.names(alt_HBW_PA_mat)]
 ```
 
 #Transpose HBW Matrix
 
 ```{r}
-HBW_PA_mat_trans <- t(HBW_PA_mat)
+alt_HBW_PA_mat_trans <- t(alt_HBW_PA_mat)
 ```
 
 #Average HBW matrix w transpose
 ```{r}
-HBW_OD_mat <- (HBW_PA_mat + HBW_PA_mat_trans) / 2
+alt_HBW_OD_mat <- (alt_HBW_PA_mat + alt_HBW_PA_mat_trans) / 2
 ```
 
 #Convert matrix to data frame 
 ```{r}
-HBW_OD_table <- HBW_OD_mat %>%
+alt_HBW_OD_table <- alt_HBW_OD_mat %>%
   odmatrix_to_od() %>%
   rename(fromId = orig,
          toId = dest) %>%
-  left_join(skims) %>%
+  left_join(alt_skims) %>%
   select(-n_transit_HBW)
 ```
 #Count trips using each HBW route
 ```{r}
-HBW_route_trips <- HBW_OD_table %>%
+alt_HBW_route_trips <- alt_HBW_OD_table %>%
   filter(flow > 0 & !is.na(routes)) %>%
   mutate(route_1 = str_split_fixed(routes, "\\|", 3)[,1],
          route_2 = str_split_fixed(routes, "\\|", 3)[,2],
@@ -517,37 +574,37 @@ HBW_route_trips <- HBW_OD_table %>%
 #Convert NHB PA matrix to OD matrix
 
 ```{r}
-NHB_PA_mat <- skims %>%
+alt_NHB_PA_mat <- alt_skims %>%
   od_to_odmatrix(attrib = "n_transit_NHB", 
                  name_orig = "fromId",
                  name_dest = "toId") 
 
-NHB_PA_mat <- NHB_PA_mat[,row.names(NHB_PA_mat)]
+alt_NHB_PA_mat <- alt_NHB_PA_mat[,row.names(alt_NHB_PA_mat)]
 ```
 
 #Transpose NHB Matrix
 
 ```{r}
-NHB_PA_mat_trans <- t(NHB_PA_mat)
+alt_NHB_PA_mat_trans <- t(alt_NHB_PA_mat)
 ```
 
 #Average NHB matrix w transpose
 ```{r}
-NHB_OD_mat <- (NHB_PA_mat + NHB_PA_mat_trans) / 2
+alt_NHB_OD_mat <- (alt_NHB_PA_mat + alt_NHB_PA_mat_trans) / 2
 ```
 
 #Convert matrix to data frame 
 ```{r}
-NHB_OD_table <- NHB_OD_mat %>%
+alt_NHB_OD_table <- alt_NHB_OD_mat %>%
   odmatrix_to_od() %>%
   rename(fromId = orig,
          toId = dest) %>%
-  left_join(skims) %>%
+  left_join(alt_skims) %>%
   select(-n_transit_NHB)
 ```
 #Count trips using each NHB route
 ```{r}
-NHB_route_trips <- NHB_OD_table %>%
+alt_NHB_route_trips <- alt_NHB_OD_table %>%
   filter(flow > 0 & !is.na(routes)) %>%
   mutate(route_1 = str_split_fixed(routes, "\\|", 3)[,1],
          route_2 = str_split_fixed(routes, "\\|", 3)[,2],
@@ -563,14 +620,14 @@ NHB_route_trips <- NHB_OD_table %>%
 #Calculate total transit ridership by route
 ```{r}
 #Load ridership of all different trip purposes
-TOT_route_trips = merge(x=HBW_route_trips,y=HBO_route_trips,by="route",all=TRUE)
-TOT_route_trips = merge(x=TOT_route_trips,y=NHB_route_trips,by="route",all=TRUE)
+alt_TOT_route_trips = merge(x=alt_HBW_route_trips,y=alt_HBO_route_trips,by="route",all=TRUE)
+alt_TOT_route_trips = merge(x=alt_TOT_route_trips,y=alt_NHB_route_trips,by="route",all=TRUE)
 
 #Replace NA with 0
-TOT_route_trips[is.na(TOT_route_trips)] = 0
+alt_TOT_route_trips[is.na(alt_TOT_route_trips)] = 0
 
 #Calculate total ridership for each route
-TOT_route_trips$total_trips = rowSums(TOT_route_trips[,2:4])
+alt_TOT_route_trips$total_trips = rowSums(alt_TOT_route_trips[,2:4])
 ```
 
 # Calculate trip distances
@@ -580,45 +637,54 @@ centroids <- here("zones",
   st_read()%>%
   filter(!st_is_empty(.)) 
 
-origins <- centroids %>% 
+alt_origins <- centroids %>% 
   slice(rep(1:n(), each = n())) %>% 
   mutate(dest_order = 
            rep(seq(1:length(centroids$id)),
                length(centroids$id)))
 
-destinations <- origins %>%
+alt_destinations <- alt_origins %>%
   arrange(dest_order)
 
-r5r_core_existing <- here("existing",
+r5r_core_alternative <- here("existing",
                           "networks") %>%
   setup_r5(verbose = FALSE)
 
-ped_dist <- detailed_itineraries(r5r_core_existing,
-                                 origins = origins,
-                                 destinations = destinations,
-                                 mode = "WALK",
-                                 verbose = FALSE)  %>%
-  mutate(miles = distance / 1609.34) %>%
-  select(fromId, toId, miles) %>%
-  st_drop_geometry()
+#alt_ped_dist <- detailed_itineraries(r5r_core_alternative,
+ #                                origins = alt_origins,
+  #                               destinations = alt_destinations,
+   #                              mode = "WALK",
+    #                             verbose = FALSE)  %>%
+  #mutate(miles = distance / 1609.34) %>%
+  #select(fromId, toId, miles) %>%
+  #st_drop_geometry()
 
-drive_dist <- detailed_itineraries(r5r_core_existing,
-                                 origins = origins,
-                                 destinations = destinations,
+#write_csv(alt_ped_dist, here("Assignment10",
+ #                        "alt_ped_dist.csv"))
+
+alt_drive_dist <- detailed_itineraries(r5r_core_alternative,
+                                 origins = alt_origins,
+                                 destinations = alt_destinations,
                                  mode = "CAR",
                                  verbose = FALSE) %>%
   mutate(miles = distance / 1609.34) %>%
   select(fromId, toId, miles) %>%
   st_drop_geometry()
 
-bike_dist <- detailed_itineraries(r5r_core_existing,
-                                 origins = origins,
-                                 destinations = destinations,
-                                 mode = "BICYCLE",
-                                 verbose = FALSE) %>%
-  mutate(miles = distance / 1609.34) %>%
-  select(fromId, toId, miles) %>%
-  st_drop_geometry()
+write_csv(alt_drive_dist, here("Assignment10",
+                         "alt_drive_dist.csv"))
+
+#alt_bike_dist <- detailed_itineraries(r5r_core_alternative,
+ #                                origins = alt_origins,
+  #                               destinations = alt_destinations,
+   #                              mode = "BICYCLE",
+    #                             verbose = FALSE) %>%
+ # mutate(miles = distance / 1609.34) %>%
+ # select(fromId, toId, miles) %>%
+ # st_drop_geometry()
+
+#write_csv(alt_bike_dist, here("Assignment10",
+#                         "alt_bike_dist.csv"))
 
 stop_r5() 
 
@@ -628,131 +694,167 @@ stop_r5()
 
 #Calculate PMT by Car for HBO trips
 ```{r}
-HBO_PMT_car <- skims %>%
-  left_join(drive_dist, by = c("fromId", "toId")) %>%
+alt_HBO_PMT_car <- alt_skims %>%
+  left_join(alt_drive_dist, by = c("fromId", "toId")) %>%
   select(n_SOV_HBO, n_HOV_HBO, miles) %>%
-  mutate(PMT_SOV_HBO = n_SOV_HBO * miles,
-         PMT_HOV_HBO = n_HOV_HBO * miles) %>%
-  summarize(total_SOV_miles = sum(PMT_SOV_HBO),
-            total_HOV_miles = sum(PMT_HOV_HBO))
+  mutate(alt_PMT_SOV_HBO = n_SOV_HBO * miles,
+         alt_PMT_HOV_HBO = n_HOV_HBO * miles) %>%
+  summarize(alt_total_SOV_miles = sum(alt_PMT_SOV_HBO),
+            alt_total_HOV_miles = sum(alt_PMT_HOV_HBO))
 
-HBO_PMT_car
+alt_HBO_PMT_car
+
+write_csv(alt_HBO_PMT_car, here("Assignment10",
+                         "alt_HBO_PMT_car.csv"))
 ```
 
 #Calculate VMT for HBO trips
 ```{r}
-HBO_VMT <- HBO_PMT_car$total_SOV_miles[1] + 
-       HBO_PMT_car$total_HOV_miles[1] / 2.71
+alt_HBO_VMT <- alt_HBO_PMT_car$alt_total_SOV_miles[1] + 
+       alt_HBO_PMT_car$alt_total_HOV_miles[1] / 2.71
 
-HBO_VMT
+alt_HBO_VMT
+
+write_csv(alt_HBO_VMT, here("Assignment10",
+                         "alt_HBO_VMT.csv"))
 ```
 
 #Calculate PMT by Bike for HBO trips
 ```{r}
-HBO_PMT_bike <- skims %>%
-  left_join(bike_dist, by = c("fromId", "toId")) %>%
+alt_HBO_PMT_bike <- alt_skims %>%
+  left_join(alt_bike_dist, by = c("fromId", "toId")) %>%
   select(n_bike_HBO, miles) %>%
-  mutate(PMT_bike_HBO = n_bike_HBO * miles) %>%
-  summarize(total_bike_miles = sum(PMT_bike_HBO))
+  mutate(alt_PMT_bike_HBO = n_bike_HBO * miles) %>%
+  summarize(alt_total_bike_miles = sum(alt_PMT_bike_HBO))
 
-HBO_PMT_bike
+alt_HBO_PMT_bike
+
+write_csv(alt_HBO_PMT_bike, here("Assignment10",
+                         "alt_HBO_PMT_bike.csv"))
 ```
 
 #Calculate PMT by Walk for HBO trips
 ```{r}
-HBO_PMT_walk <- skims %>%
-  left_join(ped_dist, by = c("fromId", "toId")) %>%
+alt_HBO_PMT_walk <- alt_skims %>%
+  left_join(alt_ped_dist, by = c("fromId", "toId")) %>%
   select(n_walk_HBO, miles) %>%
-  mutate(PMT_walk_HBO = n_walk_HBO * miles) %>%
-  summarize(total_walk_miles = sum(PMT_walk_HBO))
+  mutate(alt_PMT_walk_HBO = n_walk_HBO * miles) %>%
+  summarize(alt_total_walk_miles = sum(alt_PMT_walk_HBO))
 
-HBO_PMT_walk
+alt_HBO_PMT_walk
+
+write_csv(alt_HBO_PMT_walk, here("Assignment10",
+                         "alt_HBO_PMT_walk.csv"))
 ```
 
 ### HBW ###
 #Calculate PMT by Car for HBW trips
 ```{r}
-HBW_PMT_car <- skims %>%
-  left_join(drive_dist, by = c("fromId", "toId")) %>%
+alt_HBW_PMT_car <- alt_skims %>%
+  left_join(alt_drive_dist, by = c("fromId", "toId")) %>%
   select(n_SOV_HBW, n_HOV_HBW, miles) %>%
-  mutate(PMT_SOV_HBW = n_SOV_HBW * miles,
-         PMT_HOV_HBW = n_HOV_HBW * miles) %>%
-  summarize(total_SOV_miles = sum(PMT_SOV_HBW),
-            total_HOV_miles = sum(PMT_HOV_HBW))
+  mutate(alt_PMT_SOV_HBW = n_SOV_HBW * miles,
+         alt_PMT_HOV_HBW = n_HOV_HBW * miles) %>%
+  summarize(alt_total_SOV_miles = sum(alt_PMT_SOV_HBW),
+            alt_total_HOV_miles = sum(alt_PMT_HOV_HBW))
 
-HBW_PMT_car
+alt_HBW_PMT_car
+
+write_csv(alt_HBW_PMT_car, here("Assignment10",
+                         "alt_HBW_PMT_car.csv"))
 ```
 
 #Calculate VMT for HBW trips
 ```{r}
-HBW_VMT <- HBW_PMT_car$total_SOV_miles[1] + 
-       HBW_PMT_car$total_HOV_miles[1] / 2.71
+alt_HBW_VMT <- alt_HBW_PMT_car$alt_total_SOV_miles[1] + 
+       alt_HBW_PMT_car$alt_total_HOV_miles[1] / 2.71
 
-HBW_VMT
+alt_HBW_VMT
+
+write_csv(alt_HBW_VMT, here("Assignment10",
+                         "alt_HBW_VMT.csv"))
 ```
 
 #Calculate PMT by Bike for HBW trips
 ```{r}
-HBW_PMT_bike <- skims %>%
-  left_join(bike_dist, by = c("fromId", "toId")) %>%
+alt_HBW_PMT_bike <- alt_skims %>%
+  left_join(alt_bike_dist, by = c("fromId", "toId")) %>%
   select(n_bike_HBW, miles) %>%
-  mutate(PMT_bike_HBW = n_bike_HBW * miles) %>%
-  summarize(total_bike_miles = sum(PMT_bike_HBW))
+  mutate(alt_PMT_bike_HBW = n_bike_HBW * miles) %>%
+  summarize(alt_total_bike_miles = sum(alt_PMT_bike_HBW))
 
 HBW_PMT_bike
+
+write_csv(HBW_PMT_bike, here("Assignment10",
+                         "HBW_PMT_bike.csv"))
 ```
 
 #Calculate PMT by Walk for HBW trips
 ```{r}
-HBW_PMT_walk <- skims %>%
-  left_join(ped_dist, by = c("fromId", "toId")) %>%
+alt_HBW_PMT_walk <- alt_skims %>%
+  left_join(alt_ped_dist, by = c("fromId", "toId")) %>%
   select(n_walk_HBW, miles) %>%
-  mutate(PMT_walk_HBW = n_walk_HBW * miles) %>%
-  summarize(total_walk_miles = sum(PMT_walk_HBW))
+  mutate(alt_PMT_walk_HBW = n_walk_HBW * miles) %>%
+  summarize(alt_total_walk_miles = sum(alt_PMT_walk_HBW))
 
-HBW_PMT_walk
+alt_HBW_PMT_walk
+
+write_csv(alt_HBW_PMT_walk, here("Assignment10",
+                         "alt_HBW_PMT_walk.csv"))
 ```
 
 ### NHB ###
 #Calculate PMT by Car for NHB trips
 ```{r}
-NHB_PMT_car <- skims %>%
-  left_join(drive_dist, by = c("fromId", "toId")) %>%
+alt_NHB_PMT_car <- alt_skims %>%
+  left_join(alt_drive_dist, by = c("fromId", "toId")) %>%
   select(n_SOV_NHB, n_HOV_NHB, miles) %>%
-  mutate(PMT_SOV_NHB = n_SOV_NHB * miles,
-         PMT_HOV_NHB = n_HOV_NHB * miles) %>%
-  summarize(total_SOV_miles = sum(PMT_SOV_NHB),
-            total_HOV_miles = sum(PMT_HOV_NHB))
+  mutate(alt_PMT_SOV_NHB = n_SOV_NHB * miles,
+         alt_PMT_HOV_NHB = n_HOV_NHB * miles) %>%
+  summarize(alt_total_SOV_miles = sum(alt_PMT_SOV_NHB),
+            alt_total_HOV_miles = sum(alt_PMT_HOV_NHB))
 
-NHB_PMT_car
+alt_NHB_PMT_car
+
+write_csv(alt_NHB_PMT_car, here("Assignment10",
+                         "alt_NHB_PMT_car.csv"))
 ```
 
 #Calculate VMT for NHB trips
 ```{r}
-NHB_VMT <- NHB_PMT_car$total_SOV_miles[1] + 
-       NHB_PMT_car$total_HOV_miles[1] / 2.71
+alt_NHB_VMT <- alt_NHB_PMT_car$alt_total_SOV_miles[1] + 
+       alt_NHB_PMT_car$alt_total_HOV_miles[1] / 2.71
 
-NHB_VMT
+alt_NHB_VMT
+
+write_csv(alt_NHB_VMT, here("Assignment10",
+                         "alt_NHB_VMT.csv"))
 ```
 
 #Calculate PMT by Bike for NHB trips
 ```{r}
-NHB_PMT_bike <- skims %>%
-  left_join(bike_dist, by = c("fromId", "toId")) %>%
+alt_NHB_PMT_bike <- alt_skims %>%
+  left_join(alt_bike_dist, by = c("fromId", "toId")) %>%
   select(n_bike_NHB, miles) %>%
-  mutate(PMT_bike_NHB = n_bike_NHB * miles) %>%
-  summarize(total_bike_miles = sum(PMT_bike_NHB))
+  mutate(alt_PMT_bike_NHB = n_bike_NHB * miles) %>%
+  summarize(alt_total_bike_miles = sum(alt_PMT_bike_NHB))
 
-NHB_PMT_bike
+alt_NHB_PMT_bike
+
+write_csv(alt_NHB_PMT_bike, here("Assignment10",
+                         "alt_NHB_PMT_bike.csv"))
 ```
 
 #Calculate PMT by Walk for NHB trips
 ```{r}
-NHB_PMT_walk <- skims %>%
-  left_join(ped_dist, by = c("fromId", "toId")) %>%
+alt_NHB_PMT_walk <- alt_skims %>%
+  left_join(alt_ped_dist, by = c("fromId", "toId")) %>%
   select(n_walk_NHB, miles) %>%
-  mutate(PMT_walk_NHB = n_walk_NHB * miles) %>%
-  summarize(total_walk_miles = sum(PMT_walk_NHB))
+  mutate(alt_PMT_walk_NHB = n_walk_NHB * miles) %>%
+  summarize(alt_total_walk_miles = sum(alt_PMT_walk_NHB))
 
-NHB_PMT_walk
+alt_NHB_PMT_walk
+
+write_csv(alt_NHB_PMT_walk, here("Assignment10",
+                         "alt_NHB_PMT_walk.csv"))
 ```
