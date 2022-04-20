@@ -66,6 +66,9 @@ Then we calculate the total annual time spent driving cars and the total fuel ex
 	
 	kable(total_time, format.args = list(big.mark = ",",
 	                                     scientific = FALSE))
+	
+	write_csv(total_time, here("Assignment10",
+                         "total_time.csv"))
 ```
 Households in Denver spend a total of about 44 billion minutes driving in cars annually. The region's population is close to 2.8 million.
 	
